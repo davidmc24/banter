@@ -1,0 +1,3 @@
+moduleName=jircer-module
+moduleVersion=1.0.0
+extensionClasses=jircer.StringBuilderExtension
