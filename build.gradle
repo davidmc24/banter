@@ -1,19 +1,24 @@
+apply plugin: "application"
 apply plugin: "groovy"
 apply plugin: "idea"
 apply plugin: "project-reports"
 
 repositories {
     jcenter()
+    mavenCentral() // elasticsearch 1.0.0.RC2 isn't resolving in jcenter
 }
 
 dependencies {
+    compile "org.slf4j:slf4j-api:1.7.5"
     compile "org.codehaus.groovy:groovy:2.2.1"
     compile "org.apache.mina:mina-core:2.0.7"
-    compile "org.elasticsearch:elasticsearch:1.0.0.RC1"
-    compile "us.carrclan.david:jircer:1.0.0-SNAPSHOT"
+    compile "org.elasticsearch:elasticsearch:1.0.0.RC2"
     //compile "org.elasticsearch:elasticsearch-lang-groovy:2.0.0.RC1"
-    runtime "ch.qos.logback:logback-classic:1.0.13"
+
+    runtime "ch.qos.logback:logback-classic:1.1.0"
     runtime "com.vividsolutions:jts:1.13" // NoClassDefFoundError without this; I blame elasticsearch
 
     testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
 }
+
+mainClassName = "banter.Main"

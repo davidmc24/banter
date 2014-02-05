@@ -3,6 +3,7 @@ package jircer
 import groovy.util.logging.Slf4j
 import org.apache.mina.core.session.IoSession
 import org.apache.mina.filter.codec.ProtocolCodecFilter
+import org.apache.mina.filter.logging.LoggingFilter
 import org.apache.mina.transport.socket.SocketConnector
 import org.apache.mina.transport.socket.nio.NioSocketConnector
 
@@ -14,7 +15,7 @@ class IrcClient implements MessageHandler {
 
     void connect(String host, int port = 6667) {
         connector = new NioSocketConnector()
-//        connector.filterChain.addLast("logger", new LoggingFilter())
+        connector.filterChain.addLast("logger", new LoggingFilter())
         connector.filterChain.addLast("codec", new ProtocolCodecFilter(IrcProtocolEncoder, IrcProtocolDecoder))
         connector.handler = new IrcClientHandler(this)
         def cf = connector.connect(new InetSocketAddress(host, port))
