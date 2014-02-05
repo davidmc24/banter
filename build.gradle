@@ -1,24 +1,43 @@
-apply plugin: "application"
-apply plugin: "groovy"
-apply plugin: "idea"
+apply plugin: "ratpack-groovy"
 apply plugin: "project-reports"
+apply plugin: "idea"
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "io.ratpack:ratpack-gradle:0.9.1"
+    }
+}
 
 repositories {
     jcenter()
-    mavenCentral() // elasticsearch 1.0.0.RC2 isn't resolving in jcenter
+    maven { url "http://repo.springsource.org/repo" } // for springloaded
+}
+
+configurations {
+    all*.exclude group: "org.codehaus.groovy", module: "groovy"
 }
 
 dependencies {
-    compile "org.slf4j:slf4j-api:1.7.5"
-    compile "org.codehaus.groovy:groovy:2.2.1"
+    def slf4jVersion = "1.7.5"
+
+    compile "ch.qos.logback:logback-classic:1.1.0"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.slf4j:jul-to-slf4j:${slf4jVersion}"
+    compile "org.codehaus.groovy:groovy-all:2.2.1"
     compile "org.apache.mina:mina-core:2.0.7"
     compile "org.elasticsearch:elasticsearch:1.0.0.RC2"
     //compile "org.elasticsearch:elasticsearch-lang-groovy:2.0.0.RC1"
 
-    runtime "ch.qos.logback:logback-classic:1.1.0"
     runtime "com.vividsolutions:jts:1.13" // NoClassDefFoundError without this; I blame elasticsearch
 
     testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+
+    // SpringLoaded enables runtime hot reloading.
+    // It is not part of the app runtime and is not shipped in the distribution.
+    springloaded "org.springsource.springloaded:springloaded-core:1.1.1"
 }
 
 mainClassName = "banter.Main"

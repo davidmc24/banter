@@ -1,4 +1,12 @@
 import ch.qos.logback.classic.filter.ThresholdFilter
+import ch.qos.logback.classic.jul.LevelChangePropagator
+
+if (Boolean.getBoolean("logging.debug")) {
+    statusListener(OnConsoleStatusListener)
+}
+
+context = new LevelChangePropagator()
+context.resetJUL = true
 
 def runningAsService = System.getenv("UPSTART_JOB") != null
 
