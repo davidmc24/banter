@@ -1,4 +1,4 @@
-package jircer
+package ext
 
 class StringBuilderExtension {
 

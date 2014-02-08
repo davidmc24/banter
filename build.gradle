@@ -5,6 +5,9 @@ apply plugin: "idea"
 buildscript {
     repositories {
         jcenter()
+        // TODO: use a release version of ratpack?
+        // https://github.com/ratpack/ratpack/pull/250
+        maven { url "file:///Users/carrd/repos/ratpack/build/localrepo" } // for ratpack snapshots
     }
     dependencies {
         classpath "io.ratpack:ratpack-gradle:${ratpackVersion}"
@@ -14,6 +17,7 @@ buildscript {
 repositories {
     jcenter()
     maven { url "http://repo.springsource.org/repo" } // for springloaded
+    maven { url "file:///Users/carrd/repos/ratpack/build/localrepo" } // for ratpack snapshots
 }
 
 configurations {

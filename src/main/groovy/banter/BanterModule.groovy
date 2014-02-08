@@ -2,6 +2,7 @@ package banter
 
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
+import com.google.inject.Scopes
 import com.google.inject.name.Names
 import org.elasticsearch.node.Node
 import org.elasticsearch.client.Client
@@ -17,7 +18,7 @@ class BanterModule extends AbstractModule {
         bindConstant().annotatedWith(Names.named("ircHostname")).to("localhost")
         bindConstant().annotatedWith(Names.named("ircPort")).to(6667)
         bindConstant().annotatedWith(Names.named("ircNickname")).to("BanterBot")
-        bind(BanterBot).asEagerSingleton()
+        bind(BanterBot).in(Scopes.SINGLETON)
     }
 
     @Provides
