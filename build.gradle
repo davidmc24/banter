@@ -17,7 +17,12 @@ repositories {
 }
 
 configurations {
-    all*.exclude group: "org.codehaus.groovy", module: "groovy"
+    all {
+//        resolutionStrategy {
+//            force "com.google.guava:guava:14.0.1"
+//        }
+        exclude group: "org.codehaus.groovy", module: "groovy"
+    }
 }
 
 dependencies {

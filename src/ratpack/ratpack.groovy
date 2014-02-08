@@ -1,18 +1,23 @@
+import banter.BanterModule
 import ratpack.jackson.JacksonModule
-import static ratpack.jackson.Jackson.json
-import static ratpack.groovy.Groovy.ratpack
-import static ratpack.groovy.Groovy.groovyTemplate
+import ratpack.jackson.Jackson
+import ratpack.groovy.Groovy
 
-ratpack {
+Groovy.ratpack {
     modules {
         register new JacksonModule()
+        register new BanterModule()
     }
     handlers {
         get {
-            render groovyTemplate("index.html", title: "My Ratpack App")
+            render Groovy.groovyTemplate("index.html", title: "My Ratpack App")
         }
         get("some-json") {
-            render json(user: 1)
+            render Jackson.json(user: 1)
+        }
+        post("join/:room") {
+            // TODO: implement real joining
+            render Jackson.json(room: pathTokens["room"])
         }
         
         assets "public"
