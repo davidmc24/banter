@@ -22,7 +22,7 @@ appender("CONSOLE", ConsoleAppender) {
 appender("FILE", FileAppender) {
     // TODO: use better log dir
     // TODO: archiving, compression
-    file = "banter.log"
+    file = runningAsService ? "/var/log/banter/banter.log" : "${System.getProperty("app.config.dir", "")}/banter.log"
     append = true
     encoder(PatternLayoutEncoder) {
         pattern = "%d{HH:mm:ss.SSS} %-5level %logger - %msg%n"
