@@ -33,6 +33,10 @@ class IrcClient implements MessageHandler {
         connector = null
     }
 
+    void sendPass(String password) {
+        send(new IrcMessage(type: IrcMessageType.PASS, parameters: [password]))
+    }
+
     void sendNick(String nickname) {
         send(new IrcMessage(type: IrcMessageType.NICK, parameters: [nickname]))
     }
@@ -58,6 +62,10 @@ class IrcClient implements MessageHandler {
         send(new IrcMessage(type: IrcMessageType.PONG, parameters: [server]))
     }
 
+    void sendWhois(String nick) {
+        send(new IrcMessage(type: IrcMessageType.WHOIS, parameters: [nick]))
+    }
+
     void send(IrcMessage message) {
         log.info("Sending message: {}", message)
         session.write(message)
@@ -77,6 +85,23 @@ class IrcClient implements MessageHandler {
     }
 
     @Override
+    void onNameReply(IrcMessage message) {
+    }
+
+    @Override
     void onOther(IrcMessage message) {
     }
+
+    @Override
+    void onJoin(IrcMessage message) {
+    }
+
+    @Override
+    void onWhoisUser(IrcMessage message) {
+    }
+
+    @Override
+    void onNick(IrcMessage message) {
+    }
+
 }

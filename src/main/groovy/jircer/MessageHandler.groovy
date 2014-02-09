@@ -10,6 +10,14 @@ interface MessageHandler {
 
     void onMessage(IrcMessage message)
 
+    void onNameReply(IrcMessage message)
+
     void onOther(IrcMessage message)
+
+    void onJoin(IrcMessage message)
+
+    void onNick(IrcMessage message)
+
+    void onWhoisUser(IrcMessage message)
 
 }

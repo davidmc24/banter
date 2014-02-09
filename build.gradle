@@ -35,6 +35,7 @@ dependencies {
     compile "org.slf4j:jul-to-slf4j:${slf4jVersion}"
     compile "org.codehaus.groovy:groovy-all:2.2.1"
     compile "io.ratpack:ratpack-jackson:${ratpackVersion}"
+    compile "joda-time:joda-time:2.3"
     compile "org.apache.mina:mina-core:2.0.7"
     compile "org.elasticsearch:elasticsearch:1.0.0.RC2"
     //compile "org.elasticsearch:elasticsearch-lang-groovy:2.0.0.RC1"

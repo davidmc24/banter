@@ -44,14 +44,12 @@ class IrcClientHandler extends IoHandlerAdapter {
             case IrcMessageType.PING: messageHandler.onPing(msg); break
             case IrcMessageType.RPL_LIST: messageHandler.onListReply(msg); break
             case IrcMessageType.PRIVMSG: messageHandler.onMessage(msg); break
+            case IrcMessageType.RPL_NAMREPLY: messageHandler.onNameReply(msg); break
+            case IrcMessageType.JOIN: messageHandler.onJoin(msg); break
+            case IrcMessageType.NICK: messageHandler.onNick(msg); break
+            case IrcMessageType.RPL_WHOISUSER: messageHandler.onWhoisUser(msg); break
             default: messageHandler.onOther(msg); break
         }
-//        def buf = (IoBuffer) message;
-//        Print out read buffer content.
-//        while (buf.hasRemaining()) {
-//            System.out.print((char) buf.get());
-//        }
-//        System.out.flush();
     }
 
 }

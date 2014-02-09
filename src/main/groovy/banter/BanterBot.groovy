@@ -3,9 +3,6 @@ package banter
 import groovy.util.logging.Slf4j
 import jircer.IrcClient
 import jircer.IrcMessage
-import org.elasticsearch.client.Client
-//import org.elasticsearch.search.sort.SortBuilders
-//import org.elasticsearch.search.sort.SortOrder
 
 import javax.inject.Inject
 import javax.inject.Named
@@ -16,55 +13,127 @@ class BanterBot extends IrcClient {
     String host
     int port
     String nick
-    Client client
+    String username
+    String realname
+    String password
+    Indexer indexer
+
+    final Set<String> channelMembership = []
+    final Map<String, UserInfo> userInfo = [:]
 
     @Inject
     BanterBot(@Named("ircHostname") String host, @Named("ircPort") int port, @Named("ircNickname") String nick,
-              Client client) {
+              @Named("ircUsername") String username, @Named("ircRealname") String realname,
+              @Named("ircPassword") String password,
+              Indexer indexer) {
         this.host = host
         this.port = port
         this.nick = nick
-        this.client = client
+        this.username = username
+        this.realname = realname
+        this.password = password
+        this.indexer = indexer
         connect()
     }
 
     private void connect() {
         log.info("Starting banterbot: {}, {}, {}", host, port, nick)
         connect(host, port)
+        if (password) {
+            sendPass(password)
+        }
         sendNick(nick)
-        sendUser(nick, nick)
+        sendUser(username, realname)
         // TODO: reconnects
-        // TODO: join from endpoint
-//        indexer.sendJoin(channel)
     }
 
     @Override
     void onMessage(IrcMessage message) {
-        // Elasticsearch automatically creates a _timestamp which is indexed but not stored
-//        log.info("Got message: {}", message)
-        def doc = [
-                timestamp: new Date(),
-                user: message.prefix,
-                channel: message.parameters[0],
-                text: message.parameters[1]
-        ]
-        def indexResponse = client.prepareIndex("irc", "message").setSource(doc).execute().actionGet()
-        log.info("Indexing result: created={}, index={}, type={}, id={}, version={}", indexResponse.created, indexResponse.index, indexResponse.type, indexResponse.id, indexResponse.version)
-        // TODO: search in UI
-//        log.info("Running search")
-//        def searchResponse = client.prepareSearch()
-        // TODO: sort
-//        def searchResponse = client.prepareSearch("irc")
-//                .setTypes("message")
-////                .setPostFilter(FilterBuilders.termFilter("channel", message.parameters[0]))
-//                .addSort(SortBuilders.fieldSort("timestamp").order(SortOrder.ASC))
-//                .setFrom(0).setSize(100).setExplain(true)
-//                .addFields("user", "channel", "text", "timestamp")
-//                .execute().actionGet()
-//        log.info("Search result: {} total hits", searchResponse.hits.totalHits)
-//        for (hit in searchResponse.hits.hits) {
-//            log.info("Hit: {}, {}", hit.sourceAsMap(), hit.fields.collect {"${it.key}:${it.value.value}}"})
-//        }
+        def nickname = prefixToNickname(message.prefix)
+        def channel = message.parameters[0]
+        def text = message.parameters[1]
+        // TODO: only index messages to channels, not private messages
+        def info = userInfo[nickname] ?: new UserInfo(nickname)
+        indexer.indexMessage(info, channel, text)
+    }
+
+    private String getPrefixedNick() {
+        return "@${nick}"
+    }
+
+    @Override
+    void onNameReply(IrcMessage message) {
+        assert message.parameters.size() >= 4
+        def channelName = message.parameters[2]
+        def members = message.parameters[3]
+        log.info("Got members for channel {}: {}", channelName, members)
+        for (member in members.split(" ").collect {stripNickPrefixes(it)}) {
+            if (!userInfo[member]) {
+                sendWhois(member)
+            }
+        }
+    }
+
+    @Override
+    void onJoin(IrcMessage message) {
+        log.info("Got join message: {}", message)
+        def who = prefixToNickname(message.prefix)
+        if (who == nick) {
+            for (channelName in message.parameters[0].split(",")) {
+                log.info("Received notice that I joined channel {}", channelName)
+                channelMembership.add(channelName)
+            }
+        }
+        if (!userInfo[who]) {
+            sendWhois(who)
+        }
+    }
+
+    @Override
+    void onWhoisUser(IrcMessage message) {
+        def nickname = message.parameters[1]
+        def username = stripUsernamePrefixes(message.parameters[2])
+        def hostname = message.parameters[3]
+        def server = message.parameters[5]
+        def info = new UserInfo(nickname, username, hostname, server)
+        log.info("Setting user info for {} to {}", nickname, info)
+        userInfo[nickname] = info
+    }
+
+    @Override
+    void onNick(IrcMessage message) {
+        log.info("Get nick message: {}", message)
+        def oldNick = prefixToNickname(message.prefix)
+        def newNick = message.parameters[0]
+        log.info("{} is now {}", oldNick, newNick)
+        def info = userInfo[oldNick]
+        if (info) {
+            info.nickname = newNick
+            userInfo[newNick] = info
+        }
+    }
+
+    boolean isInChannel(String channelName) {
+        // TODO: case insensitive?
+        return channelMembership.contains(channelName)
+    }
+
+    private String prefixToNickname(String prefix) {
+        def nickname = prefix
+        // TODO: use leftSplit
+        def exclamationIndex = nickname.indexOf("!")
+        if (exclamationIndex >= 0) {
+            nickname = nickname.substring(0, exclamationIndex)
+        }
+        return nickname
+    }
+
+    private String stripUsernamePrefixes(String nick) {
+        return nick.replaceAll(/[\~]/, "")
+    }
+
+    private String stripNickPrefixes(String nick) {
+        return nick.replaceAll(/[\~&@%\+]/, "")
     }
 
 }

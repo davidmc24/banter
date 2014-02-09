@@ -1,5 +1,8 @@
 import banter.BanterBot
 import banter.BanterModule
+import banter.HttpHeaderConstants
+import banter.Searcher
+import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
 import ratpack.jackson.JacksonModule
 import ratpack.jackson.Jackson
@@ -15,20 +18,39 @@ Groovy.ratpack {
         register new BanterModule()
     }
     handlers {
-        get {
-            render Groovy.groovyTemplate("index.html", title: "My Ratpack App")
+        prefix("channel") {
+            get { BanterBot bot ->
+                render Jackson.json(bot.channelMembership.sort())
+            }
+            prefix(":channel") {
+                handler { BanterBot bot ->
+                    byMethod {
+                        get {
+                            def channel = pathTokens["channel"]
+                            response.status(bot.isInChannel(channel) ? NO_CONTENT : NOT_FOUND)
+                            response.send()
+                        }
+                        put {
+                            def channel = pathTokens["channel"]
+                            if (bot.isInChannel(channel)) {
+                                response.status(NO_CONTENT)
+                            } else {
+                                log.info("Attempting to join channel {}", channel)
+                                bot.sendJoin(channel)
+                                response.status(ACCEPTED)
+                            }
+                            def encodedChannel = URLEncoder.encode(channel, "UTF-8")
+                            response.headers.set(HttpHeaderConstants.LOCATION, "/channel/${encodedChannel}")
+                            response.send()
+                        }
+                    }
+                }
+            }
         }
-        get("some-json") {
-            render Jackson.json(user: 1)
+        get { Searcher searcher ->
+            def hits = searcher.search(request.queryParams["channel"], request.queryParams["query"])
+            render Groovy.groovyTemplate("index.html", title: "My Ratpack App", hits: hits)
         }
-        post("join/:room") { BanterBot banterBot ->
-            def room = pathTokens["room"]
-            log.info("Attempting to join room {}", room)
-            banterBot.sendJoin(room)
-            response.status(ACCEPTED)
-            response.send()
-        }
-        
         assets "public"
     }
 }
