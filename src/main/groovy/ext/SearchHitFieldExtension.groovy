@@ -13,11 +13,16 @@ import org.joda.time.format.PeriodFormat
 class SearchHitFieldExtension {
 
     private static final chronology = ISOChronology.instanceUTC
-    private static final formatter = PeriodFormat.default
+    private static final periodFormatter = PeriodFormat.default
+    private static final dateTimeFormatter = DateTimeFormat.mediumDateTime()
     private static final timeFormatter = DateTimeFormat.shortTime()
 
     static DateTime getDateTimeValue(SearchHitField self) {
         return (self.value as String).parseDateTime()
+    }
+
+    static String getDateTimeString(SearchHitField self) {
+        return dateTimeFormatter.print(getDateTimeValue(self))
     }
 
     static Date getDateValue(SearchHitField self) {
@@ -29,11 +34,12 @@ class SearchHitFieldExtension {
     }
 
     static Period getPeriod(SearchHitField self) {
+        // TODO: intelligent selection of fields
         return getDuration(self).toPeriod(PeriodType.forFields([DurationFieldType.years(), DurationFieldType.months(), DurationFieldType.days(), DurationFieldType.hours(), DurationFieldType.minutes(), DurationFieldType.seconds()] as DurationFieldType[]), chronology)
     }
 
     static String getPeriodString(SearchHitField self) {
-        return formatter.print(getPeriod(self))
+        return periodFormatter.print(getPeriod(self))
     }
 
     static String getTimeString(SearchHitField self) {

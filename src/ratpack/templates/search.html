@@ -60,7 +60,7 @@
                                 <div class="search-result">
                                     <div class="search-result-header">
                                         <h3>${hit.field("channel").value}</h3>
-                                        <span class="time-ago" title="${hit.field('timestamp').value}">${hit.field('timestamp').periodString} ago</span>
+                                        <span class="time-ago" title="${hit.field('timestamp').dateTimeString}">${hit.field('timestamp').periodString} ago</span>
                                         <!-- TODO: time anchors -->
                                         <a href="/context?channel=${hit.field('channel').value.encodeURIComponent()}&q=${model.q.encodeURIComponent()}&timestamp=${hit.field('timestamp').dateTimeValue}">view »</a>
                                         <!--
