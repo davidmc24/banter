@@ -1,3 +1,3 @@
 moduleName=jircer-module
 moduleVersion=1.0.0
-extensionClasses=ext.StringBuilderExtension,ext.ResponseExtension,ext.SearchHitExtension,ext.SearchHitFieldExtension
+extensionClasses=ext.StringBuilderExtension,ext.ResponseExtension,ext.SearchHitExtension,ext.SearchHitFieldExtension,ext.StringExtension

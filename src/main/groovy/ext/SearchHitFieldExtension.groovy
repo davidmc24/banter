@@ -2,27 +2,28 @@ package ext
 
 import org.elasticsearch.search.SearchHitField
 import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import org.joda.time.Duration
 import org.joda.time.DurationFieldType
 import org.joda.time.Period
 import org.joda.time.PeriodType
 import org.joda.time.chrono.ISOChronology
-import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.format.PeriodFormat
 
 class SearchHitFieldExtension {
 
     private static final chronology = ISOChronology.instanceUTC
-    private static final parser = ISODateTimeFormat.dateOptionalTimeParser().withZone(DateTimeZone.UTC)
     private static final formatter = PeriodFormat.default
 
-    static DateTime getDateValue(SearchHitField self) {
-        return parser.parseDateTime(self.value)
+    static DateTime getDateTimeValue(SearchHitField self) {
+        return (self.value as String).parseDateTime()
+    }
+
+    static Date getDateValue(SearchHitField self) {
+        return getDateTimeValue(self).toDate()
     }
 
     static Duration getDuration(SearchHitField self) {
-        return new Duration(getDateValue(self), DateTime.now())
+        return new Duration(getDateTimeValue(self), DateTime.now())
     }
 
     static Period getPeriod(SearchHitField self) {

@@ -3,6 +3,8 @@ import banter.BanterModule
 import banter.HttpHeaderConstants
 import banter.Searcher
 import org.elasticsearch.client.Client
+import org.joda.time.DateTimeZone
+import org.joda.time.format.ISODateTimeFormat
 import org.slf4j.LoggerFactory
 import ratpack.jackson.JacksonModule
 import ratpack.jackson.Jackson
@@ -48,8 +50,17 @@ Groovy.ratpack {
             }
         }
         get { Searcher searcher ->
-            def hits = searcher.search(request.queryParams["channel"], request.queryParams["query"])
-            render Groovy.groovyTemplate("index.html", title: "My Ratpack App", hits: hits)
+            def channel = request.queryParams["channel"]
+            def query = request.queryParams["query"]
+            def hits = searcher.search(channel, query)
+            render Groovy.groovyTemplate("index.html", title: "My Ratpack App", query: query, hits: hits)
+        }
+        get ("context") { Searcher searcher ->
+            def channel = request.queryParams["channel"]
+            def query = request.queryParams["query"]
+            def timestamp = request.queryParams["timestamp"]?.parseDateTime()
+            def hits = searcher.searchContext(channel, query, timestamp)
+            render Groovy.groovyTemplate("context.html", hits: hits)
         }
         assets "public"
     }
