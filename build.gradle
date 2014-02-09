@@ -5,26 +5,20 @@ apply plugin: "idea"
 buildscript {
     repositories {
         jcenter()
-        // TODO: use a release version of ratpack?
-        // https://github.com/ratpack/ratpack/pull/250
-        maven { url "file:///Users/carrd/repos/ratpack/build/localrepo" } // for ratpack snapshots
     }
     dependencies {
         classpath "io.ratpack:ratpack-gradle:${ratpackVersion}"
+        classpath "com.kenshoo:gradle-fpm:0.4"
     }
 }
 
 repositories {
     jcenter()
     maven { url "http://repo.springsource.org/repo" } // for springloaded
-    maven { url "file:///Users/carrd/repos/ratpack/build/localrepo" } // for ratpack snapshots
 }
 
 configurations {
     all {
-//        resolutionStrategy {
-//            force "com.google.guava:guava:14.0.1"
-//        }
         exclude group: "org.codehaus.groovy", module: "groovy"
     }
 }
@@ -38,7 +32,6 @@ dependencies {
     compile "joda-time:joda-time:2.3"
     compile "org.apache.mina:mina-core:2.0.7"
     compile "org.elasticsearch:elasticsearch:1.0.0.RC2"
-    //compile "org.elasticsearch:elasticsearch-lang-groovy:2.0.0.RC1"
 
     runtime "com.vividsolutions:jts:1.13" // NoClassDefFoundError without this; I blame elasticsearch
 
@@ -50,3 +43,26 @@ dependencies {
 }
 
 mainClassName = "banter.Main"
+
+apply plugin: "fpm-packaging"
+
+task stage(type: Copy) {
+    group "build"
+    description "Assembles the package structure"
+    dependsOn installApp
+    from "${project.buildDir}/install"
+    into "${project.buildDir}/package/opt"
+}
+
+packaging {
+    dependencies = ["ngircd", "openjdk-7-jre-headless"]
+    baseDir = "${project.buildDir}/package"
+    extraOptions = [
+            "--architecture": "all"
+    ]
+    force = true
+}
+
+debian {
+    dependsOn stage
+}
