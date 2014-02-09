@@ -1,71 +1,41 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Ratpack: ${model.title}</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width">
-
-  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-  <link rel="stylesheet" href="lib/normalize/normalize.css">
-  <link rel="stylesheet" href="styles/ratpack.css">
-
-  <!-- build:js scripts/modernizr.js -->
-  <script src="lib/modernizr/modernizr.js"></script>
-  <!-- endbuild -->
+    <meta charset="utf-8">
+    <title>Banter</title>
 </head>
 <body>
-  <header>
-    <h1>Ratpack</h1>
-    <p>a micro web framework for Java &amp; Groovy</p>
-  </header>
+    <header>
+        <h1>Banter</h1>
+        <p>Lightweight logged group chat</p>
+    </header>
 
-  <section>
-    <h1>${model.title}</h1>
-    <p>This is the main page for your Ratpack app.</p>
-  </section>
+    <% if (model.notice) { %>
+    <section>
+        ${model.notice}
+    </section>
+    <% } %>
 
-  <section>
-      <table>
-          <thead>
-          <tr>
-              <th>Timestamp</th>
-              <th>Channel</th>
-              <th>Nick</th>
-              <th>User</th>
-              <th>Real</th>
-              <th>Message</th>
-              <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <% for (hit in model.hits.hits) { %>
-          <tr>
-              <td>${hit.field("timestamp").periodString} ago</td>
-              <td>${hit.field("channel").value}</td>
-              <td>${hit.field("nickname").value}</td>
-              <td>${hit.field("username").value}</td>
-              <td>${hit.field("realname").value}</td>
-              <td>${hit.maybeHighlightedFieldValue("text")}</td>
-              <td><a href="/context?channel=${hit.field('channel').value.encodeURIComponent()}&query=${model.query.encodeURIComponent()}&timestamp=${hit.field('timestamp').dateTimeValue}">view</a></td>
-          </tr>
-          <% } %>
-          </tbody>
-      </table>
-  </section>
-
-  <footer class="site-footer"></footer>
-
-  <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-  <script>
-  </script>
-
-  <!-- build:js scripts/jquery.js -->
-  <script src="lib/jquery/jquery.min.js"></script>
-  <!-- endbuild -->
+    <section>
+        <form action="/addChannel" method="POST">
+        <fieldset>
+            <legend>Add a channel</legend>
+            <label>Name: <input type="text" name="channel"/></label>
+            <input type="submit" value="Add Channel"/>
+        </fieldset>
+        </form>
+        <form action="/search" method="GET">
+        <fieldset>
+            <legend>Search</legend>
+            <label>Channel: <select>
+                <option value="">All</option>
+                <% for (channel in model.channels) { %>
+                <option value="${channel}">${channel}</option>
+                <% } %>
+            </select></label>
+            <label>Query: <input type="text" name="query"/></label>
+            <input type="submit" value="Search"/>
+        </fieldset>
+        </form>
+    </section>
 </body>
 </html>

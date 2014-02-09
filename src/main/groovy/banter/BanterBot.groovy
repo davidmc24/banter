@@ -19,6 +19,7 @@ class BanterBot extends IrcClient {
     boolean ssl
     Indexer indexer
 
+    final Set<String> knownChannels = []
     final Set<String> channelMembership = []
     final Map<String, UserInfo> userInfo = [:]
 
@@ -47,6 +48,11 @@ class BanterBot extends IrcClient {
         sendNick(nick)
         sendUser(username, realname)
         // TODO: reconnects
+    }
+
+    void attemptToJoin(String channel) {
+        knownChannels.add(channel)
+        sendJoin(channel)
     }
 
     @Override
