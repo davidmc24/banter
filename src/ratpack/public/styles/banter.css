@@ -47,6 +47,11 @@ div.search-box {
     background-color: #fff;
 }
 
+#chats div.me {
+    background-color: #F3F7FB;
+    border-top: 1px solid #BED6EB;
+}
+
 #chats div.chatBlock {
     border-top: 1px solid #E1E1E1;
     border-collapse: collapse;
@@ -96,6 +101,11 @@ a {
     border-left: 1px solid #e1e1e1;
 }
 
+#chats div.me td.messageBlock {
+    vertical-align: middle;
+    margin-bottom: 4px;
+    border-left: 1px solid #BED6EB;
+}
 
 #chats p.timeBlock, #chats p.timeBlock a {
     white-space: nowrap;

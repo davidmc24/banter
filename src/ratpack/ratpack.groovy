@@ -2,6 +2,8 @@ import banter.BanterBot
 import banter.BanterModule
 import banter.HttpHeaderConstants
 import banter.Searcher
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import org.slf4j.LoggerFactory
 import ratpack.jackson.JacksonModule
 import ratpack.jackson.Jackson
@@ -63,12 +65,13 @@ Groovy.ratpack {
             def hits = searcher.search(channel, q)
             render Groovy.groovyTemplate("search.html", q: q, channel: channel, hits: hits, channels: bot.knownChannels.sort())
         }
-        get ("context") { Searcher searcher ->
+        get ("context") { Searcher searcher, BanterBot bot ->
             def channel = request.queryParams["channel"] ?: ""
             def q = request.queryParams["q"]
-            def timestamp = request.queryParams["timestamp"]?.parseDateTime()
+            def timestamp = request.queryParams["timestamp"]?.parseDateTime() ?: DateTime.now()
+            def dateString = DateTimeFormat.longDate().print(timestamp)
             def hits = searcher.searchContext(channel, q, timestamp)
-            render Groovy.groovyTemplate("context.html", hits: hits)
+            render Groovy.groovyTemplate("context.html", q: q, channel: channel, hits: hits, channels: bot.knownChannels.sort(), dateString: dateString)
         }
         post ("addChannel") { BanterBot banterBot ->
             def form = parse(Form)

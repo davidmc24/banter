@@ -72,21 +72,19 @@
                                         </form>
                                         -->
                                     </div>
-                                    <div class="highlight-target">
-                                        <div class="chatBlock them">
-                                            <table width="100%" cellspacing="0" cellpadding="0">
-                                                <tbody><tr>
-                                                    <td class="nameBlock">
-                                                        <p>${hit.field('realname').value}</p>
-                                                    </td>
-                                                    <td class="messageBlock">
-                                                        <p class="timeBlock">${hit.field('timestamp').timeString}</p>
-                                                        <p class="msgText">${hit.maybeHighlightedFieldValue('text')}</p>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    <div class="chatBlock them">
+                                        <table width="100%" cellspacing="0" cellpadding="0">
+                                            <tbody><tr>
+                                                <td class="nameBlock">
+                                                    <p>${hit.field('realname').value}</p>
+                                                </td>
+                                                <td class="messageBlock">
+                                                    <p class="timeBlock">${hit.field('timestamp').timeString}</p>
+                                                    <p class="msgText">${hit.maybeHighlightedFieldValue('text')}</p>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

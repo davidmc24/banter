@@ -39,7 +39,7 @@ class Searcher {
         def searchRequest = client.prepareSearch(INDEX)
                         .setTypes(TYPE)
                         .addSort(SortBuilders.fieldSort("timestamp").order(ASC))
-                        .setFrom(0).setSize(100).setExplain(true)
+                        .setFrom(0).setSize(500)
                         .addHighlightedField("text")
                         .setHighlighterPreTags('<span class="highlight">')
                         .setHighlighterPostTags('</span>')
@@ -56,8 +56,8 @@ class Searcher {
     SearchHits searchContext(String channel, String queryTerm, DateTime timestamp) {
         // TODO: better querying
         log.info("Running search")
-        def start = timestamp.minusHours(1)
-        def end = timestamp.plusHours(1)
+        def start = timestamp.withTimeAtStartOfDay()
+        def end = start.plusDays(1)
         def query = QueryBuilders.constantScoreQuery(FilterBuilders.andFilter(
                 FilterBuilders.inFilter("channel", channel),
                 FilterBuilders.rangeFilter("timestamp").gte(start).lt(end)
@@ -65,7 +65,7 @@ class Searcher {
         def searchRequest = client.prepareSearch(INDEX)
                         .setTypes(TYPE)
                         .addSort(SortBuilders.fieldSort("timestamp").order(ASC))
-                        .setFrom(0).setSize(100).setExplain(true)
+                        .setFrom(0).setSize(500)
                         .setHighlighterQuery(QueryBuilders.termQuery("text", queryTerm))
                         .addHighlightedField("text")
                         .setHighlighterPreTags("<b>")
