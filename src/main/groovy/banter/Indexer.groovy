@@ -19,9 +19,9 @@ class Indexer {
         initializeIndices()
     }
 
-    void indexMessage(UserInfo userInfo, String channel, String text) {
+    void indexMessage(UserInfo userInfo, String channel, String text, Date timestamp=new Date()) {
         // Elasticsearch automatically creates a _timestamp which is indexed but not stored
-        def doc = [timestamp: new Date(), nickname: userInfo.nickname, username: userInfo.username, realname: userInfo.realname, channel: channel, text: text]
+        def doc = [timestamp: timestamp, nickname: userInfo.nickname, username: userInfo.username, realname: userInfo.realname, channel: channel, text: text]
         def indexResponse = client.prepareIndex(INDEX, TYPE).setSource(doc).execute().actionGet()
         log.info("Indexing result: created={}, index={}, type={}, id={}, version={}", indexResponse.created,
                 indexResponse.index, indexResponse.type, indexResponse.id, indexResponse.version)
