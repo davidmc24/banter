@@ -1,7 +1,7 @@
 <!doctype html>
 <head>
     <meta charset="utf-8">
-    <title>Banter Dashboard</title>
+    <title>Banter Admin</title>
     <link rel="stylesheet" href="styles/banter.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui/css/aui.css" media="all">
     <!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.4.3/aui/css/aui-ie.css" media="all"><![endif]-->
@@ -30,26 +30,33 @@
         <header class="aui-page-header">
             <div class="aui-page-header-inner">
                 <div class="aui-page-header-main">
-                    <h1>Dashboard</h1>
+                    <h1>Admin</h1>
                 </div>
             </div>
         </header>
         <div class="aui-page-panel">
             <div class="aui-page-panel-inner">
                 <section class="aui-page-panel-content">
-                    <h2>History Search</h2>
-                    <div class="search-box">
-                    <form action="/search" method="GET" id="search-form" class="aui">
-                        <input type="text" id="q" name="q" class="text"/>
-                        <select class="select" id="channel" name="channel">
-                            <option value="">All rooms</option>
-                            <% for (channel in model.channels) { %>
-                            <option>${channel}</option>
-                            <% } %>
-                        </select>
-                        <input type="submit" value="Search" class="button"/>
-                    </form>
+                    <h2>Channel Management</h2>
+                    <% if (model.notice) { %>
+                    <div class="aui-message info closeable">
+                        <p><span class="aui-icon icon-info"></span> ${model.notice}</p>
                     </div>
+                    <% } %>
+                    <h3>Current channels</h3>
+                    <% if (model.channels) { %>
+                        <ul>
+                            <% for (channel in model.channels) { %>
+                            <li>${channel}</li>
+                            <% } %>
+                        </ul>
+                    <% } else { %>
+                        No channels currently registered.
+                    <% } %>
+                    <form action="/addChannel" method="POST" class="aui">
+                        <label><input type="text" name="channel" class="text"/></label>
+                        <input type="submit" value="Add Channel" class="button"/>
+                    </form>
                 </section>
             </div>
         </div>

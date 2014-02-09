@@ -51,8 +51,11 @@ Groovy.ratpack {
             }
         }
         get { BanterBot bot ->
+            render Groovy.groovyTemplate("index.html", channels: bot.knownChannels.sort())
+        }
+        get ("admin") { BanterBot bot ->
             def notice = request.queryParams["notice"] ?: ""
-            render Groovy.groovyTemplate("index.html", channels: bot.knownChannels.sort(), notice: notice)
+            render Groovy.groovyTemplate("admin.html", channels: bot.knownChannels.sort(), notice: notice)
         }
         get ("search") { Searcher searcher ->
             def channel = request.queryParams["channel"]
@@ -75,7 +78,7 @@ Groovy.ratpack {
                     channel = "#${channel}"
                 }
                 banterBot.attemptToJoin(channel)
-                redirect("/?notice=Attempting to join ${channel.encodeURIComponent()}")
+                redirect("/admin?notice=Registered channel ${channel.encodeURIComponent()}")
             } else {
                 response.status(400).send()
             }
