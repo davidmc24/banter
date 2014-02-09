@@ -29,9 +29,9 @@ class BanterBot extends IrcClient {
     final Set<String> pendingWhois = new ConcurrentSkipListSet<>()
 
     @Inject
-    BanterBot(@Named("ircHostname") String host, @Named("ircPort") int port, @Named("ircNickname") String nick,
-              @Named("ircUsername") String username, @Named("ircRealname") String realname,
-              @Named("ircPassword") String password, @Named("ircSSL") boolean ssl,
+    BanterBot(@Named("irc.hostname") String host, @Named("irc.port") int port, @Named("irc.nickname") String nick,
+              @Named("irc.username") String username, @Named("irc.realname") String realname,
+              @Named("irc.password") String password, @Named("irc.ssl") boolean ssl,
               Indexer indexer, Searcher searcher) {
         this.host = host
         this.port = port

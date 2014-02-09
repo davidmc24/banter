@@ -20,6 +20,8 @@ appender("CONSOLE", ConsoleAppender) {
 }
 
 appender("FILE", FileAppender) {
+    // TODO: use better log dir
+    // TODO: archiving, compression
     file = "banter.log"
     append = true
     encoder(PatternLayoutEncoder) {

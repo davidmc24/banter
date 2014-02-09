@@ -5,36 +5,51 @@ import com.google.inject.Provides
 import com.google.inject.name.Names
 import groovy.util.logging.Slf4j
 import org.elasticsearch.client.Client
+import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.node.Node
 
+import javax.inject.Named
 import javax.inject.Singleton
 
-import static com.google.inject.Scopes.SINGLETON
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 
 @Slf4j
 class BanterModule extends AbstractModule {
 
+    private static final String CONFIG_FILE_NAME = "banter.groovy"
+
+    private static File locateConfigDirectory(String fileName) {
+        def paths = [
+                "/etc/banter",
+                "${System.getProperty("user.home")}/.banter",
+                "config",
+                "../../config"
+        ]
+        def files = paths.collect {new File(it).canonicalFile}
+        def file = files.find {new File(it, fileName).file}
+        if (!file) {
+            throw new FileNotFoundException("Could not find ${fileName} in any of these directories: ${files}")
+        }
+        return file
+    }
+
     @Override
     protected void configure() {
-        // TODO: use a config file
-        bindConstant().annotatedWith(Names.named("ircHostname")).to("localhost")
-        bindConstant().annotatedWith(Names.named("ircPort")).to(6697)
-        bindConstant().annotatedWith(Names.named("ircSSL")).to(true)
-        bindConstant().annotatedWith(Names.named("ircNickname")).to("BanterBot")
-        bindConstant().annotatedWith(Names.named("ircUsername")).to("banterbot")
-        bindConstant().annotatedWith(Names.named("ircRealname")).to("Banter Bot")
-        bindConstant().annotatedWith(Names.named("ircPassword")).to("")
-        bind(Indexer).in(SINGLETON)
-        bind(Searcher).in(SINGLETON)
+        def configDir = locateConfigDirectory(CONFIG_FILE_NAME)
+        log.info("Using config from {}", configDir)
+        bind(File).annotatedWith(Names.named("elasticsearch.yml")).toInstance(new File(configDir, "elasticsearch.yml"))
+        def appConfig = new ConfigSlurper().parse(new File(configDir, CONFIG_FILE_NAME).toURI().toURL())
+        Names.bindProperties(binder(), appConfig.toProperties())
+        bind(Indexer).asEagerSingleton()
+        bind(Searcher).asEagerSingleton()
         bind(BanterBot).asEagerSingleton()
     }
 
     @Provides
     @Singleton
-    Node node() {
-        // TODO: adjust node settings
-        return nodeBuilder().local(true).node()
+    Node node(@Named("elasticsearch.yml") File esConfigFile) {
+        def settings = ImmutableSettings.builder().loadFromUrl(esConfigFile.toURI().toURL())
+        return nodeBuilder().settings(settings).local(true).node()
     }
 
     @Provides
