@@ -30,12 +30,15 @@ class Searcher {
                         .setTypes(TYPE)
                         .addSort(SortBuilders.fieldSort("timestamp").order(ASC))
                         .setFrom(0).setSize(100).setExplain(true)
+                        .addHighlightedField("text")
+                        .setHighlighterPreTags("<b>")
+                        .setHighlighterPostTags("</b>")
                         .addFields("timestamp", "channel", "nickname", "username", "realname", "text")
                         .setQuery(query)
         def searchResponse = searchRequest.get()
         log.info("Search result: {} total hits", searchResponse.hits.totalHits)
         for (hit in searchResponse.hits.hits) {
-            log.info("Hit: {}, {}", hit.sourceAsMap(), hit.fields.collect {"${it.key}:${it.value.value}}"})
+            log.info("Hit: {}, {}, {}", hit.sourceAsMap(), hit.fields.collect {"${it.key}:${it.value.value}}"}, hit.highlightFields())
         }
         return searchResponse.hits
     }

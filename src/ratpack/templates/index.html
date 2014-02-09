@@ -49,7 +49,7 @@
               <td>${hit.field("nickname").value}</td>
               <td>${hit.field("username").value}</td>
               <td>${hit.field("realname").value}</td>
-              <td>${hit.field("text").value}</td>
+              <td>${hit.maybeHighlightedFieldValue("text")}</td>
           </tr>
           <% } %>
           </tbody>
