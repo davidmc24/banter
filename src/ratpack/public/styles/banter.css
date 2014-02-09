@@ -1,0 +1,11 @@
+div.search-box {
+    margin: 20px 0;
+}
+
+#search-form .text {
+    height: 2.2em;
+}
+
+.highlight {
+    background-color: #FFF7A6;
+}

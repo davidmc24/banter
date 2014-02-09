@@ -17,6 +17,7 @@ Groovy.ratpack {
         register new JacksonModule()
         register new BanterModule()
     }
+    // TODO: consider using thymeleaf
     handlers {
         prefix("api") {
             prefix("channel") {
@@ -55,7 +56,7 @@ Groovy.ratpack {
         }
         get ("search") { Searcher searcher ->
             def channel = request.queryParams["channel"]
-            def query = request.queryParams["query"]
+            def query = request.queryParams["q"]
             def hits = searcher.search(channel, query)
             render Groovy.groovyTemplate("search.html", title: "My Ratpack App", query: query, hits: hits)
         }
