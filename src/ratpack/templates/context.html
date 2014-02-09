@@ -56,6 +56,7 @@
                     <div id="chats" class="history-container">
                         <% for (hit in model.hits.hits) { %>
                         <div class="chatBlock them">
+                            <a name="${hit.field('timestamp').numericTimeString}"></a>
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tbody>
                                 <tr>

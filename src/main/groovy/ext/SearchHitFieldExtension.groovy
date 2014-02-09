@@ -15,7 +15,8 @@ class SearchHitFieldExtension {
     private static final chronology = ISOChronology.instanceUTC
     private static final periodFormatter = PeriodFormat.default
     private static final dateTimeFormatter = DateTimeFormat.mediumDateTime()
-    private static final timeFormatter = DateTimeFormat.shortTime()
+    private static final shortTimeFormatter = DateTimeFormat.shortTime()
+    private static final numericTimeFormatter = DateTimeFormat.forPattern("HH:mm:ss")
 
     static DateTime getDateTimeValue(SearchHitField self) {
         return (self.value as String).parseDateTime()
@@ -43,7 +44,11 @@ class SearchHitFieldExtension {
     }
 
     static String getTimeString(SearchHitField self) {
-        return timeFormatter.print(getDateTimeValue(self))
+        return shortTimeFormatter.print(getDateTimeValue(self))
+    }
+
+    static String getNumericTimeString(SearchHitField self) {
+        return numericTimeFormatter.print(getDateTimeValue(self))
     }
 
 }

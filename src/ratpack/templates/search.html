@@ -61,16 +61,7 @@
                                     <div class="search-result-header">
                                         <h3>${hit.field("channel").value}</h3>
                                         <span class="time-ago" title="${hit.field('timestamp').dateTimeString}">${hit.field('timestamp').periodString} ago</span>
-                                        <!-- TODO: time anchors -->
-                                        <a href="/context?channel=${hit.field('channel').value.encodeURIComponent()}&q=${model.q.encodeURIComponent()}&timestamp=${hit.field('timestamp').dateTimeValue}">view »</a>
-                                        <!--
-                                        <form action="/context" method="GET">
-                                            <input type="hidden" name="channel" value="${hit.field('channel').value}"/>
-                                            <input type="hidden" name="query" value="${model.query}"/>
-                                            <input type="hidden" name="timestamp" value="${hit.field('timestamp').dateTimeValue}">
-                                            <input type="submit" value="view"/>
-                                        </form>
-                                        -->
+                                        <a href="/context?channel=${hit.field('channel').value.encodeURIComponent()}&q=${model.q.encodeURIComponent()}&timestamp=${hit.field('timestamp').dateTimeValue}#${hit.field('timestamp').numericTimeString}">view »</a>
                                     </div>
                                     <div class="chatBlock them">
                                         <table width="100%" cellspacing="0" cellpadding="0">
