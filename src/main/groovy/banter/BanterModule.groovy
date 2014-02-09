@@ -25,9 +25,9 @@ class BanterModule extends AbstractModule {
         bindConstant().annotatedWith(Names.named("ircUsername")).to("banterbot")
         bindConstant().annotatedWith(Names.named("ircRealname")).to("Banter Bot")
         bindConstant().annotatedWith(Names.named("ircPassword")).to("")
-        bind(BanterBot).in(SINGLETON)
         bind(Indexer).in(SINGLETON)
         bind(Searcher).in(SINGLETON)
+        bind(BanterBot).asEagerSingleton()
     }
 
     @Provides

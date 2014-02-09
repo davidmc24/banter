@@ -6,6 +6,9 @@ import jircer.IrcMessage
 
 import javax.inject.Inject
 import javax.inject.Named
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentSkipListSet
+import java.util.concurrent.CopyOnWriteArraySet
 
 @Slf4j
 class BanterBot extends IrcClient {
@@ -18,16 +21,18 @@ class BanterBot extends IrcClient {
     String password
     boolean ssl
     Indexer indexer
+    Searcher searcher
 
-    final Set<String> knownChannels = []
-    final Set<String> channelMembership = []
-    final Map<String, UserInfo> userInfo = [:]
+    final Set<String> knownChannels = new CopyOnWriteArraySet<>()
+    final Set<String> channelMembership = new ConcurrentSkipListSet<>()
+    final Map<String, UserInfo> userInfo = new ConcurrentHashMap<>()
+    final Set<String> pendingWhois = new ConcurrentSkipListSet<>()
 
     @Inject
     BanterBot(@Named("ircHostname") String host, @Named("ircPort") int port, @Named("ircNickname") String nick,
               @Named("ircUsername") String username, @Named("ircRealname") String realname,
               @Named("ircPassword") String password, @Named("ircSSL") boolean ssl,
-              Indexer indexer) {
+              Indexer indexer, Searcher searcher) {
         this.host = host
         this.port = port
         this.ssl = ssl
@@ -36,7 +41,10 @@ class BanterBot extends IrcClient {
         this.realname = realname
         this.password = password
         this.indexer = indexer
+        this.searcher = searcher
+        knownChannels.addAll(searcher.knownChannels)
         connect()
+        knownChannels.each {sendJoin(it)}
     }
 
     private void connect() {
@@ -65,8 +73,18 @@ class BanterBot extends IrcClient {
         indexer.indexMessage(info, channel, text)
     }
 
-    private String getPrefixedNick() {
-        return "@${nick}"
+//    private String getPrefixedNick() {
+//        return "@${nick}"
+//    }
+
+    void requestWhois(String nickname) {
+        if (!userInfo[nickname]) {
+            if (pendingWhois.add(nickname)) {
+                sendWhois(nickname)
+            } else {
+                log.debug("Already requested whois info for {}", nickname)
+            }
+        }
     }
 
     @Override
@@ -76,9 +94,7 @@ class BanterBot extends IrcClient {
         def members = message.parameters[3]
         log.info("Got members for channel {}: {}", channelName, members)
         for (member in members.split(" ").collect {stripNickPrefixes(it)}) {
-            if (!userInfo[member]) {
-                sendWhois(member)
-            }
+            requestWhois(member)
         }
     }
 
@@ -92,19 +108,19 @@ class BanterBot extends IrcClient {
                 channelMembership.add(channelName)
             }
         }
-        if (!userInfo[who]) {
-            sendWhois(who)
-        }
+        requestWhois(who)
     }
 
     @Override
     void onWhoisUser(IrcMessage message) {
         def nickname = message.parameters[1]
-        def username = stripUsernamePrefixes(message.parameters[2])
+//        def username = stripUsernamePrefixes(message.parameters[2])
+        def username = message.parameters[2]
         def hostname = message.parameters[3]
         def server = message.parameters[5]
         def info = new UserInfo(nickname, username, hostname, server)
         log.info("Setting user info for {} to {}", nickname, info)
+        pendingWhois.remove(nickname)
         userInfo[nickname] = info
     }
 

@@ -3,11 +3,14 @@ package banter
 import com.google.inject.Inject
 import groovy.util.logging.Slf4j
 import org.apache.lucene.queryparser.xml.FilterBuilder
+import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
+import org.elasticsearch.search.facet.FacetBuilders
+import org.elasticsearch.search.facet.terms.TermsFacet
 import org.elasticsearch.search.sort.SortBuilders
 import org.joda.time.DateTime
 
@@ -75,6 +78,15 @@ class Searcher {
             log.info("Hit: {}, {}, {}", hit.sourceAsMap(), hit.fields.collect {"${it.key}:${it.value.value}}"}, hit.highlightFields())
         }
         return searchResponse.hits
+    }
+
+    Set<String> getKnownChannels() {
+        def searchRequest = client.prepareSearch(INDEX)
+                .setTypes(TYPE)
+                .addFacet(FacetBuilders.termsFacet("channel").field("channel"))
+                .setSearchType(SearchType.COUNT)
+        def searchResponse = searchRequest.get()
+        return searchResponse.facets.facet(TermsFacet, "channel").entries.collect {it.term.string()} as Set
     }
 
 }
