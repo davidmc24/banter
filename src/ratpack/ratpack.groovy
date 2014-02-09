@@ -57,17 +57,17 @@ Groovy.ratpack {
             def notice = request.queryParams["notice"] ?: ""
             render Groovy.groovyTemplate("admin.html", channels: bot.knownChannels.sort(), notice: notice)
         }
-        get ("search") { Searcher searcher ->
-            def channel = request.queryParams["channel"]
-            def query = request.queryParams["q"]
-            def hits = searcher.search(channel, query)
-            render Groovy.groovyTemplate("search.html", title: "My Ratpack App", query: query, hits: hits)
+        get ("search") { Searcher searcher, BanterBot bot ->
+            def channel = request.queryParams["channel"] ?: ""
+            def q = request.queryParams["q"] ?: ""
+            def hits = searcher.search(channel, q)
+            render Groovy.groovyTemplate("search.html", q: q, channel: channel, hits: hits, channels: bot.knownChannels.sort())
         }
         get ("context") { Searcher searcher ->
-            def channel = request.queryParams["channel"]
-            def query = request.queryParams["query"]
+            def channel = request.queryParams["channel"] ?: ""
+            def q = request.queryParams["q"]
             def timestamp = request.queryParams["timestamp"]?.parseDateTime()
-            def hits = searcher.searchContext(channel, query, timestamp)
+            def hits = searcher.searchContext(channel, q, timestamp)
             render Groovy.groovyTemplate("context.html", hits: hits)
         }
         post ("addChannel") { BanterBot banterBot ->

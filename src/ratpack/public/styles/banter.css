@@ -9,3 +9,108 @@ div.search-box {
 .highlight {
     background-color: #FFF7A6;
 }
+
+#chats * {
+    font-family: "Lucida Grande",arial,sans-serif;
+    font-size: 12px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.search-result-header {
+    margin: 30px 0 10px 0!important;
+}
+
+.search-result-header h3 {
+    font-size: 13px !important;
+    font-weight: bold !important;
+    margin-left: 2px !important;
+    display: inline-block;
+}
+
+.search-result-header .time-ago {
+    display: inline-block;
+    margin-left: 10px !important;
+    font-weight: normal;
+    color: #999;
+}
+
+.search-result-header a {
+    display: inline-block;
+    margin-left: 10px !important;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+#chats div.them {
+    background-color: #fff;
+}
+
+#chats div.chatBlock {
+    border-top: 1px solid #E1E1E1;
+    border-collapse: collapse;
+    line-height: 20px;
+    vertical-align: middle;
+}
+
+a {
+    color: #27629c;
+    text-decoration: underline;
+}
+
+#chats div.chatBlock td {
+    padding: 3px 0;
+}
+
+#chats td.nameBlock {
+    width: 110px;
+    background-color: #f7f7f7;
+    border-top: 1px solid #fff;
+    border-right: 1px solid #fff;
+    vertical-align: top;
+    font-weight: bold;
+    text-align: right;
+}
+
+#chats td.nameBlock p {
+    color: #636363;
+    width: 110px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: bold;
+}
+
+#chats div.chatBlock p, #chats div.chatBlock div {
+    margin: 0 10px;
+}
+
+#chats p {
+    font-family: "Lucida Grande",arial,sans-serif;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+#chats td.messageBlock {
+    border-left: 1px solid #e1e1e1;
+}
+
+
+#chats p.timeBlock, #chats p.timeBlock a {
+    white-space: nowrap;
+    color: #999;
+    text-align: right;
+    vertical-align: top;
+    float: right;
+    margin-top: 0;
+    font-size: 11px;
+}
+
+#chats p.timeBlock a {
+    text-decoration: none;
+}
+
+#chats td.messageBlock p.msgText {
+    clear: left;
+}

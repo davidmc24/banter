@@ -7,12 +7,14 @@ import org.joda.time.DurationFieldType
 import org.joda.time.Period
 import org.joda.time.PeriodType
 import org.joda.time.chrono.ISOChronology
+import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.PeriodFormat
 
 class SearchHitFieldExtension {
 
     private static final chronology = ISOChronology.instanceUTC
     private static final formatter = PeriodFormat.default
+    private static final timeFormatter = DateTimeFormat.shortTime()
 
     static DateTime getDateTimeValue(SearchHitField self) {
         return (self.value as String).parseDateTime()
@@ -32,6 +34,10 @@ class SearchHitFieldExtension {
 
     static String getPeriodString(SearchHitField self) {
         return formatter.print(getPeriod(self))
+    }
+
+    static String getTimeString(SearchHitField self) {
+        return timeFormatter.print(getDateTimeValue(self))
     }
 
 }
