@@ -16,6 +16,7 @@ class BanterBot extends IrcClient {
     String username
     String realname
     String password
+    boolean ssl
     Indexer indexer
 
     final Set<String> channelMembership = []
@@ -24,10 +25,11 @@ class BanterBot extends IrcClient {
     @Inject
     BanterBot(@Named("ircHostname") String host, @Named("ircPort") int port, @Named("ircNickname") String nick,
               @Named("ircUsername") String username, @Named("ircRealname") String realname,
-              @Named("ircPassword") String password,
+              @Named("ircPassword") String password, @Named("ircSSL") boolean ssl,
               Indexer indexer) {
         this.host = host
         this.port = port
+        this.ssl = ssl
         this.nick = nick
         this.username = username
         this.realname = realname
@@ -37,8 +39,8 @@ class BanterBot extends IrcClient {
     }
 
     private void connect() {
-        log.info("Starting banterbot: {}, {}, {}", host, port, nick)
-        connect(host, port)
+        log.info("Starting banterbot: {}, {}, {}, {}", nick, host, port, ssl)
+        connect(host, port, ssl)
         if (password) {
             sendPass(password)
         }

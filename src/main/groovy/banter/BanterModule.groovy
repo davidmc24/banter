@@ -19,7 +19,8 @@ class BanterModule extends AbstractModule {
     protected void configure() {
         // TODO: use a config file
         bindConstant().annotatedWith(Names.named("ircHostname")).to("localhost")
-        bindConstant().annotatedWith(Names.named("ircPort")).to(6667)
+        bindConstant().annotatedWith(Names.named("ircPort")).to(6697)
+        bindConstant().annotatedWith(Names.named("ircSSL")).to(true)
         bindConstant().annotatedWith(Names.named("ircNickname")).to("BanterBot")
         bindConstant().annotatedWith(Names.named("ircUsername")).to("banterbot")
         bindConstant().annotatedWith(Names.named("ircRealname")).to("Banter Bot")

@@ -1,11 +1,17 @@
 package jircer
 
+import banter.AcceptAllTrustManager
 import groovy.util.logging.Slf4j
 import org.apache.mina.core.session.IoSession
 import org.apache.mina.filter.codec.ProtocolCodecFilter
 import org.apache.mina.filter.logging.LoggingFilter
+import org.apache.mina.filter.ssl.SslFilter
 import org.apache.mina.transport.socket.SocketConnector
 import org.apache.mina.transport.socket.nio.NioSocketConnector
+
+import javax.net.ssl.KeyManager
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
 
 @Slf4j
 class IrcClient implements MessageHandler {
@@ -13,14 +19,28 @@ class IrcClient implements MessageHandler {
     private SocketConnector connector
     private IoSession session
 
-    void connect(String host, int port = 6667) {
+    void connect(String host, int port = 6667, boolean ssl = false) {
         connector = new NioSocketConnector()
+        if (ssl) {
+            connector.filterChain.addLast("ssl", createSslFilter())
+        }
         connector.filterChain.addLast("logger", new LoggingFilter())
         connector.filterChain.addLast("codec", new ProtocolCodecFilter(IrcProtocolEncoder, IrcProtocolDecoder))
         connector.handler = new IrcClientHandler(this)
         def cf = connector.connect(new InetSocketAddress(host, port))
         cf.awaitUninterruptibly()
         session = cf.session
+    }
+
+    private SslFilter createSslFilter() {
+        def sslContext = SSLContext.getInstance("SSL")
+        def keyManagers = [] as KeyManager[]
+        def trustManagers = [new AcceptAllTrustManager()] as TrustManager[]
+        def secureRandom = null
+        sslContext.init(keyManagers, trustManagers, secureRandom)
+        def sslFilter = new SslFilter(sslContext)
+        sslFilter.useClientMode = true
+        sslFilter
     }
 
     void awaitClose() {
