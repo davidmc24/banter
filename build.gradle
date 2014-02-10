@@ -51,6 +51,7 @@ task stage(type: Copy) {
     description "Assembles the package structure"
     dependsOn installApp
     into "${project.buildDir}/package"
+    from "src/package"
     into("opt") {
         from "${project.buildDir}/install"
     }
@@ -60,10 +61,21 @@ packaging {
     dependencies = ["ngircd", "openjdk-7-jre-headless"]
     baseDir = "${project.buildDir}/package"
     extraOptions = [
+            "--license": "Apache License, Version 2.0",
+            "--vendor": "David M. Carr <david@carrclan.us>",
+            "--maintainer": "David M. Carr <david@carrclan.us>",
+            "--description": "Lightweight logged group chat",
+            "--url": "https://github.com/davidmc24/banter",
+            "--category": "net",
             "--architecture": "all",
+            "--config-files": "etc/banter/banter.groovy",
             "--after-install": "../../src/debian/banter.postinst",
             "--after-remove": "../../src/debian/banter.postrm"
     ]
+    // TODO: user/group???
+    // TODO: add second config file; "etc/banter/elasticsearch.yml"
+    // https://github.com/kenshoo/gradle-fpm-plugin/issues/11
+    // TODO: specify directories? opt/banter etc/banter var/banter var/log/banter
     force = true
 }
 
