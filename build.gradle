@@ -50,15 +50,19 @@ task stage(type: Copy) {
     group "build"
     description "Assembles the package structure"
     dependsOn installApp
-    from "${project.buildDir}/install"
-    into "${project.buildDir}/package/opt"
+    into "${project.buildDir}/package"
+    into("opt") {
+        from "${project.buildDir}/install"
+    }
 }
 
 packaging {
     dependencies = ["ngircd", "openjdk-7-jre-headless"]
     baseDir = "${project.buildDir}/package"
     extraOptions = [
-            "--architecture": "all"
+            "--architecture": "all",
+            "--after-install": "../../src/debian/banter.postinst",
+            "--after-remove": "../../src/debian/banter.postrm"
     ]
     force = true
 }
