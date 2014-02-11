@@ -30,6 +30,7 @@ dependencies {
     compile "org.codehaus.groovy:groovy-all:2.2.1"
     compile "io.ratpack:ratpack-jackson:${ratpackVersion}"
     compile "io.ratpack:ratpack-thymeleaf:${ratpackVersion}"
+    compile "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.2.1"
     compile "joda-time:joda-time:2.3"
     compile "org.apache.mina:mina-core:2.0.7"
     compile "org.elasticsearch:elasticsearch:1.0.0.RC2"

@@ -2,6 +2,8 @@ import banter.BanterBot
 import banter.BanterModule
 import banter.HttpHeaderConstants
 import banter.Searcher
+import banter.ThymeleafLayoutModule
+import com.google.inject.util.Modules
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.slf4j.LoggerFactory
@@ -20,6 +22,7 @@ Groovy.ratpack {
     modules {
         register new JacksonModule()
         register(new ThymeleafModule())
+        register Modules.override(new ThymeleafModule()).with(new ThymeleafLayoutModule())
         register new BanterModule()
     }
     // TODO: consider using thymeleaf
