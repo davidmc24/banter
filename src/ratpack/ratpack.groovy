@@ -9,6 +9,8 @@ import ratpack.jackson.JacksonModule
 import ratpack.jackson.Jackson
 import ratpack.groovy.Groovy
 import ratpack.form.Form
+import ratpack.thymeleaf.Template
+import ratpack.thymeleaf.ThymeleafModule
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*
 
@@ -17,6 +19,7 @@ def log = LoggerFactory.getLogger("banter.ratpack.handler")
 Groovy.ratpack {
     modules {
         register new JacksonModule()
+        register(new ThymeleafModule())
         register new BanterModule()
     }
     // TODO: consider using thymeleaf
@@ -53,7 +56,7 @@ Groovy.ratpack {
             }
         }
         get { BanterBot bot ->
-            render Groovy.groovyTemplate("index.html", channels: bot.knownChannels.sort())
+            render Template.thymeleafTemplate("index", channels: bot.knownChannels.sort())
         }
         get ("admin") { BanterBot bot ->
             def notice = request.queryParams["notice"] ?: ""

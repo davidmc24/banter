@@ -124,3 +124,7 @@ a {
 #chats td.messageBlock p.msgText {
     clear: left;
 }
+
+#footer .footer-body, #footer-logo a {
+    background: none;
+}
