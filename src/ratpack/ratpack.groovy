@@ -21,11 +21,9 @@ def log = LoggerFactory.getLogger("banter.ratpack.handler")
 Groovy.ratpack {
     modules {
         register new JacksonModule()
-        register(new ThymeleafModule())
         register Modules.override(new ThymeleafModule()).with(new ThymeleafLayoutModule())
         register new BanterModule()
     }
-    // TODO: consider using thymeleaf
     handlers {
         prefix("api") {
             prefix("channel") {
