@@ -21,6 +21,7 @@ def log = LoggerFactory.getLogger("banter.ratpack.handler")
 Groovy.ratpack {
     modules {
         register new JacksonModule()
+        // TODO: update based on https://github.com/ratpack/ratpack/issues/253
         register Modules.override(new ThymeleafModule()).with(new ThymeleafLayoutModule())
         register new BanterModule()
     }
