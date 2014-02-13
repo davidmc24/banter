@@ -1,0 +1,13 @@
+<div th:remove="tag">
+    <h2>History Search</h2>
+    <div class="search-box">
+    <form action="/search" method="GET" id="search-form" class="aui">
+        <input type="text" id="q" name="q" class="text" th:value="${q}"/>
+        <select class="select" id="channel" name="channel">
+            <option value="">All rooms</option>
+            <option th:each="opt : ${channels}" th:value="${opt}" th:text="${opt}" th:selected="${opt.equals(channel)}">#channel</option>
+        </select>
+        <input type="submit" value="Search" class="button"/>
+    </form>
+    </div>
+</div>

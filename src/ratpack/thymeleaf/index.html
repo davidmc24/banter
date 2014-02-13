@@ -8,21 +8,9 @@
         <header layout:replace="fragments/pageheader">
             <h1 layout:fragment="pageheader-content">Dashboard</h1>
         </header>
-        <div class="aui-page-panel">
-            <div class="aui-page-panel-inner">
-                <section class="aui-page-panel-content">
-                    <h2>History Search</h2>
-                    <div class="search-box">
-                    <form action="/search" method="GET" id="search-form" class="aui">
-                        <input type="text" id="q" name="q" class="text"/>
-                        <select class="select" id="channel" name="channel">
-                            <option value="">All rooms</option>
-                            <option th:each="channel : ${channels}" th:text="${channel}">My Channel</option>
-                        </select>
-                        <input type="submit" value="Search" class="button"/>
-                    </form>
-                    </div>
-                </section>
+        <div layout:replace="fragments/pagepanel">
+            <div layout:fragment="pagepanel-content" th:remove="tag">
+                <div th:include="fragments/searchform" th:remove="tag"/>
             </div>
         </div>
     </section>

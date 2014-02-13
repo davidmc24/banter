@@ -8,23 +8,21 @@
         <header layout:replace="fragments/pageheader">
             <h1 layout:fragment="pageheader-content">Admin</h1>
         </header>
-        <div class="aui-page-panel">
-            <div class="aui-page-panel-inner">
-                <section class="aui-page-panel-content">
-                    <h2>Channel Management</h2>
-                    <div class="aui-message info closeable" th:if="${not #strings.isEmpty(notice)}">
-                        <p><span class="aui-icon icon-info"></span> <span th:text="${notice}" th:remove="tag">My Notice!</span></p>
-                    </div>
-                    <h3>Current channels</h3>
-                    <ul th:unless="${#lists.isEmpty(channels)}">
-                        <li th:each="channel : ${channels}" th:text="${channel}">#channel</li>
-                    </ul>
-                    <div th:if="${#lists.isEmpty(channels)}">No channels currently registered.</div>
-                    <form action="/addChannel" method="POST" class="aui">
-                        <label><input type="text" name="channel" class="text"/></label>
-                        <input type="submit" value="Add Channel" class="button"/>
-                    </form>
-                </section>
+        <div layout:replace="fragments/pagepanel">
+            <div layout:fragment="pagepanel-content" th:remove="tag">
+                <h2>Channel Management</h2>
+                <div class="aui-message info closeable" th:if="${not #strings.isEmpty(notice)}">
+                    <p><span class="aui-icon icon-info"></span> <span th:text="${notice}" th:remove="tag">My Notice!</span></p>
+                </div>
+                <h3>Current channels</h3>
+                <ul th:unless="${#lists.isEmpty(channels)}">
+                    <li th:each="channel : ${channels}" th:text="${channel}">#channel</li>
+                </ul>
+                <div th:if="${#lists.isEmpty(channels)}">No channels currently registered.</div>
+                <form action="/addChannel" method="POST" class="aui">
+                    <label><input type="text" name="channel" class="text"/></label>
+                    <input type="submit" value="Add Channel" class="button"/>
+                </form>
             </div>
         </div>
     </section>

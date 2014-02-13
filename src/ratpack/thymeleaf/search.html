@@ -8,48 +8,36 @@
         <header layout:replace="fragments/pageheader">
             <h1 layout:fragment="pageheader-content">History Search</h1>
         </header>
-        <div class="aui-page-panel">
-            <div class="aui-page-panel-inner">
-                <section class="aui-page-panel-content">
-                    <h2>History Search</h2>
-                    <div class="search-box">
-                    <form action="/search" method="GET" id="search-form" class="aui">
-                        <input type="text" id="q" name="q" class="text" th:value="${q}"/>
-                        <select class="select" id="channel" name="channel">
-                            <option value="">All rooms</option>
-                            <option th:each="opt : ${channels}" th:value="${opt}" th:text="${opt}" th:selected="${opt.equals(channel)}">#channel</option>
-                        </select>
-                        <input type="submit" value="Search" class="button"/>
-                    </form>
-                    </div>
-                    <div class="search-results-container">
-                        <div id="chats" class="search-results">
-                            <div class="search-result-container" th:each="hit : ${hits}">
-                                <div class="search-result">
-                                    <div class="search-result-header">
-                                        <h3 th:text="${hit.channel}">#channel</h3>
-                                        <span class="time-ago" th:title="${hit.dateTimeString}" th:text="${hit.periodString} + ' ago'">5 minutes ago</span>
-                                        <a th:href="${hit.getContextURL(q)}">view »</a>
-                                    </div>
-                                    <div class="chatBlock them">
-                                        <table width="100%" cellspacing="0" cellpadding="0">
-                                            <tbody><tr>
-                                                <td class="nameBlock">
-                                                    <p th:text="${hit.realname}">Some Dude</p>
-                                                </td>
-                                                <td class="messageBlock">
-                                                    <p class="timeBlock" th:text="${hit.timeString}">11:37 PM</p>
-                                                    <p class="msgText" th:utext="${hit.maybeHighlightedText}">Hey y'all!</p>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+        <div layout:replace="fragments/pagepanel">
+            <div layout:fragment="pagepanel-content" th:remove="tag">
+                <div th:include="fragments/searchform" th:remove="tag"/>
+                <div class="search-results-container">
+                    <div id="chats" class="search-results">
+                        <div class="search-result-container" th:each="hit : ${hits}">
+                            <div class="search-result">
+                                <div class="search-result-header">
+                                    <h3 th:text="${hit.channel}">#channel</h3>
+                                    <span class="time-ago" th:title="${hit.dateTimeString}" th:text="${hit.periodString} + ' ago'">5 minutes ago</span>
+                                    <a th:href="${hit.getContextURL(q)}">view »</a>
+                                </div>
+                                <div class="chatBlock them">
+                                    <table width="100%" cellspacing="0" cellpadding="0">
+                                        <tbody><tr>
+                                            <td class="nameBlock">
+                                                <p th:text="${hit.realname}">Some Dude</p>
+                                            </td>
+                                            <td class="messageBlock">
+                                                <p class="timeBlock" th:text="${hit.timeString}">11:37 PM</p>
+                                                <p class="msgText" th:utext="${hit.maybeHighlightedText}">Hey y'all!</p>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
             </div>
         </div>
     </section>
