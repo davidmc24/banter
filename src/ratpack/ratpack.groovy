@@ -1,6 +1,7 @@
 import banter.BanterBot
 import banter.BanterModule
 import banter.HttpHeaderConstants
+import banter.MessageSearchHit
 import banter.Searcher
 import banter.ThymeleafLayoutModule
 import com.google.inject.util.Modules
@@ -68,7 +69,7 @@ Groovy.ratpack {
             def channel = request.queryParams["channel"] ?: ""
             def q = request.queryParams["q"] ?: ""
             def hits = searcher.search(channel, q)
-            render Groovy.groovyTemplate("search.html", q: q, channel: channel, hits: hits, channels: bot.knownChannels.sort())
+            render Template.thymeleafTemplate("search", q: q, channel: channel, hits: hits.hits.collect {new MessageSearchHit(it)}, channels: bot.knownChannels.sort())
         }
         get ("context") { Searcher searcher, BanterBot bot ->
             def channel = request.queryParams["channel"] ?: ""
