@@ -4,14 +4,9 @@
     <title>Admin</title>
 </head>
 <body>
-<div>
     <section layout:fragment="content">
-        <header class="aui-page-header">
-            <div class="aui-page-header-inner">
-                <div class="aui-page-header-main">
-                    <h1>Admin</h1>
-                </div>
-            </div>
+        <header layout:replace="fragments/pageheader">
+            <h1 layout:fragment="pageheader-content">Admin</h1>
         </header>
         <div class="aui-page-panel">
             <div class="aui-page-panel-inner">
@@ -33,6 +28,5 @@
             </div>
         </div>
     </section>
-</div>
 </body>
 </html>
