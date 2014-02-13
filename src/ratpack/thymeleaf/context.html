@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html layout:decorator="layouts/main">
+<head>
+    <title>History Search</title>
+</head>
+<body>
+<div>
+    <section layout:fragment="content">
+        <header class="aui-page-header">
+            <div class="aui-page-header-inner">
+                <div class="aui-page-header-main">
+                    <h1>Channels » <span th:text="${channel}" th:remove="tag">#channel</span> » Chat History</h1>
+                </div>
+            </div>
+        </header>
+        <div class="aui-page-panel">
+            <div class="aui-page-panel-inner">
+                <section class="aui-page-panel-content">
+                    <h2>History Search - <span th:text="${dateString}" th:remove="tag">February 10, 2014</span></h2>
+                    <div class="search-box">
+                    <form action="/search" method="GET" id="search-form" class="aui">
+                        <input type="text" id="q" name="q" class="text" th:value="${q}"/>
+                        <select class="select" id="channel" name="channel">
+                            <option value="">All rooms</option>
+                            <option th:each="opt : ${channels}" th:value="${opt}" th:text="${opt}" th:selected="${opt.equals(channel)}">#channel</option>
+                        </select>
+                        <input type="submit" value="Search" class="button"/>
+                    </form>
+                    </div>
+                    <div id="chats" class="history-container">
+                        <div class="chatBlock them" th:each="hit : ${hits}">
+                            <a th:name="${hit.numericTimeString}"></a>
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tbody>
+                                <tr>
+                                    <td class="nameBlock">
+                                        <p th:text="${hit.realname}">Some Dude</p>
+                                    </td>
+                                    <td class="messageBlock">
+                                        <p class="timeBlock" th:text="${hit.timeString}">11:37 PM</p>
+                                        <p class="msgText" th:utext="${hit.maybeHighlightedText}">Hey y'all!</p>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

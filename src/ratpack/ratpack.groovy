@@ -77,7 +77,7 @@ Groovy.ratpack {
             def timestamp = request.queryParams["timestamp"]?.parseDateTime() ?: DateTime.now()
             def dateString = DateTimeFormat.longDate().print(timestamp)
             def hits = searcher.searchContext(channel, q, timestamp)
-            render Groovy.groovyTemplate("context.html", q: q, channel: channel, hits: hits, channels: bot.knownChannels.sort(), dateString: dateString)
+            render Template.thymeleafTemplate("context", q: q, channel: channel, hits: hits.hits.collect {new MessageSearchHit(it)}, channels: bot.knownChannels.sort(), dateString: dateString)
         }
         post ("addChannel") { BanterBot banterBot ->
             def form = parse(Form)
