@@ -21,7 +21,7 @@
                         <p><span class="aui-icon icon-info"></span> <span th:text="${notice}" th:remove="tag">My Notice!</span></p>
                     </div>
                     <h3>Current channels</h3>
-                    <ul th:if="${not #lists.isEmpty(channels)}">
+                    <ul th:unless="${#lists.isEmpty(channels)}">
                         <li th:each="channel : ${channels}" th:text="${channel}">#channel</li>
                     </ul>
                     <div th:if="${#lists.isEmpty(channels)}">No channels currently registered.</div>
