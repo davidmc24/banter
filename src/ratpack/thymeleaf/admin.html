@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html layout:decorator="layouts/main">
+<head>
+    <title>Admin</title>
+</head>
+<body>
+<div>
+    <section layout:fragment="content">
+        <header class="aui-page-header">
+            <div class="aui-page-header-inner">
+                <div class="aui-page-header-main">
+                    <h1>Admin</h1>
+                </div>
+            </div>
+        </header>
+        <div class="aui-page-panel">
+            <div class="aui-page-panel-inner">
+                <section class="aui-page-panel-content">
+                    <h2>Channel Management</h2>
+                    <div class="aui-message info closeable" th:if="${not #strings.isEmpty(notice)}">
+                        <p><span class="aui-icon icon-info"></span> <span th:text="${notice}" th:remove="tag">My Notice!</span></p>
+                    </div>
+                    <h3>Current channels</h3>
+                    <ul th:if="${not #lists.isEmpty(channels)}">
+                        <li th:each="channel : ${channels}" th:text="${channel}">#channel</li>
+                    </ul>
+                    <div th:if="${#lists.isEmpty(channels)}">No channels currently registered.</div>
+                    <form action="/addChannel" method="POST" class="aui">
+                        <label><input type="text" name="channel" class="text"/></label>
+                        <input type="submit" value="Add Channel" class="button"/>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

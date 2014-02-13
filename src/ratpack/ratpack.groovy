@@ -62,7 +62,7 @@ Groovy.ratpack {
         }
         get ("admin") { BanterBot bot ->
             def notice = request.queryParams["notice"] ?: ""
-            render Groovy.groovyTemplate("admin.html", channels: bot.knownChannels.sort(), notice: notice)
+            render Template.thymeleafTemplate("admin", channels: bot.knownChannels.sort(), notice: notice)
         }
         get ("search") { Searcher searcher, BanterBot bot ->
             def channel = request.queryParams["channel"] ?: ""
