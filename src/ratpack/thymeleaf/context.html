@@ -15,7 +15,7 @@
                 <div th:include="fragments/searchform" th:remove="tag"/>
                 <h3 th:text="${dateString}">February 10, 2014</h3>
                 <div id="chats" class="history-container">
-                    <div class="chatBlock them" th:each="hit : ${hits}">
+                    <div class="chatBlock" th:each="hit : ${hits}">
                         <a th:name="${hit.numericTimeString}"></a>
                         <table width="100%" cellspacing="0" cellpadding="0">
                             <tbody>
