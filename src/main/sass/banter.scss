@@ -1,3 +1,15 @@
+$highlight-color: #FFF7A6;
+$border-color: #E1E1E1;
+$space-border-color: #FFFFFF;
+$dimmed-text-color: #999999;
+$shaded-text-color: #636363;
+$shaded-background-color: #F7F7F7;
+
+$name-width: 110px;
+
+@import "compass/css3/inline-block";
+@import "compass/typography/text/ellipsis";
+
 div.search-box {
   margin: 20px 0;
 }
@@ -7,36 +19,33 @@ div.search-box {
 }
 
 .highlight {
-  background-color: #FFF7A6;
+  background-color: $highlight-color;
 }
 
 .search-result-header {
   margin: 30px 0 10px 0 !important;
+  font-size: 12px;
   h3 {
+    @include inline-block;
     font-size: 13px !important;
     font-weight: bold !important;
     margin-left: 2px !important;
-    display: inline-block;
   }
   .time-ago {
-    display: inline-block;
+    @include inline-block;
     margin-left: 10px !important;
-    color: #999999;
+    color: $dimmed-text-color;
   }
   a {
-    display: inline-block;
+    @include inline-block;
     margin-left: 10px !important;
     text-decoration: none;
   }
 }
 
-#chats * {
-  font-size: 12px;
-}
-
 #chats {
   div.chatBlock {
-    border-top: 1px solid #E1E1E1;
+    border-top: 1px solid $border-color;
     td {
       padding: 3px 0;
     }
@@ -45,30 +54,28 @@ div.search-box {
     }
   }
   td.nameBlock {
-    width: 110px;
-    background-color: #F7F7F7;
-    border-top: 1px solid #FFFFFF;
-    border-right: 1px solid #FFFFFF;
+    width: $name-width;
+    background-color: $shaded-background-color;
+    border-top: 1px solid $space-border-color;
+    border-right: 1px solid $space-border-color;
     vertical-align: top;
     font-weight: bold;
     text-align: right;
     p {
-      color: #636363;
-      width: 110px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      color: $shaded-text-color;
+      width: $name-width;
+      @include ellipsis;
     }
   }
   p {
     font-size: 12px;
   }
   td.messageBlock {
-      border-left: 1px solid #E1E1E1;
+    border-left: 1px solid $border-color;
   }
   p.timeBlock, p.timeBlock a {
     white-space: nowrap;
-    color: #999999;
+    color: $dimmed-text-color;
     float: right;
     font-size: 11px;
   }
