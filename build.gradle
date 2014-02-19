@@ -1,13 +1,17 @@
 apply plugin: "ratpack-groovy"
+apply plugin: "compass"
 apply plugin: "project-reports"
 apply plugin: "idea"
 
 buildscript {
     repositories {
         jcenter()
+        // TODO: get this into jcenter
+        maven { url "http://dl.bintray.com/robfletcher/gradle-plugins" } // for compass
     }
     dependencies {
         classpath "io.ratpack:ratpack-gradle:${ratpackVersion}"
+        classpath "org.gradle.plugins:gradle-compass:1.0.7"
         classpath "com.kenshoo:gradle-fpm:0.4"
     }
 }
@@ -43,6 +47,17 @@ dependencies {
     // It is not part of the app runtime and is not shipped in the distribution.
     springloaded "org.springsource.springloaded:springloaded-core:1.1.1"
 }
+
+compass {
+    cssDir = file("src/ratpack/public/styles")
+    sassDir = file("src/main/sass")
+    debugInfo = false
+    environment = "production"
+}
+
+processResources.inputs.files compileSass
+run.dependsOn watchSass
+clean.dependsOn cleanCompileSass
 
 mainClassName = "banter.Main"
 

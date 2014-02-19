@@ -1,9 +1,12 @@
 .DS_Store
 .gradle/
 .idea/
+.jruby/
+.sass-cache/
 out/
 build/
 data/
+src/ratpack/public/styles/
 *.iml
 *.ipr
 *.iws
