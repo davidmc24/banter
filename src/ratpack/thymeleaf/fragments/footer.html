@@ -1,5 +1,7 @@
 <footer id="footer" role="contentinfo">
     <section class="footer-body">
-        Banter &copy; <span th:text="${#calendars.year(execInfo.now)}" th:remove="tag">9999</span> David M. Carr
+        Banter
+        <a th:if="${not #strings.isEmpty(version)}" th:href="${versionUrl}" th:text="${shortVersion}">v1.0.0</a>
+        &copy; <span th:text="${#calendars.year(execInfo.now)}" th:remove="tag">9999</span> David M. Carr
     </section>
 </footer>

@@ -81,6 +81,11 @@ div.search-box {
   }
 }
 
-#footer .footer-body, #footer-logo a {
-  background: none;
+#footer {
+  .footer-body {
+    background: none;
+  }
+  a {
+    text-decoration: underline;
+  }
 }

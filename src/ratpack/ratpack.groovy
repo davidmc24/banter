@@ -19,6 +19,14 @@ import static io.netty.handler.codec.http.HttpResponseStatus.*
 
 def log = LoggerFactory.getLogger("banter.ratpack.handler")
 
+def buildInfo = new Properties()
+def propsFile = getClass().getResourceAsStream("/build-info.properties")
+if (propsFile) {
+    buildInfo.load(propsFile)
+}
+def version = buildInfo.getProperty("TRAVIS_COMMIT")
+def baseModel = [version: version, shortVersion: version?.take(8), versionUrl: "https://github.com/davidmc24/banter/commit/${version}"]
+
 Groovy.ratpack {
     modules {
         register new JacksonModule()
@@ -59,17 +67,20 @@ Groovy.ratpack {
             }
         }
         get { BanterBot bot ->
-            render Template.thymeleafTemplate("index", channels: bot.knownChannels.sort())
+            def model = baseModel + [channels: bot.knownChannels.sort()]
+            render Template.thymeleafTemplate(model, "index")
         }
         get ("admin") { BanterBot bot ->
             def notice = request.queryParams["notice"] ?: ""
-            render Template.thymeleafTemplate("admin", channels: bot.knownChannels.sort(), notice: notice)
+            def model = baseModel + [channels: bot.knownChannels.sort(), notice: notice]
+            render Template.thymeleafTemplate(model, "admin")
         }
         get ("search") { Searcher searcher, BanterBot bot ->
             def channel = request.queryParams["channel"] ?: ""
             def q = request.queryParams["q"] ?: ""
             def hits = searcher.search(channel, q)
-            render Template.thymeleafTemplate("search", q: q, channel: channel, hits: hits.hits.collect {new MessageSearchHit(it)}, channels: bot.knownChannels.sort())
+            def model = baseModel + [q: q, channel: channel, hits: hits.hits.collect {new MessageSearchHit(it)}, channels: bot.knownChannels.sort()]
+            render Template.thymeleafTemplate(model, "search")
         }
         get ("context") { Searcher searcher, BanterBot bot ->
             def channel = request.queryParams["channel"] ?: ""
@@ -77,7 +88,8 @@ Groovy.ratpack {
             def timestamp = request.queryParams["timestamp"]?.parseDateTime() ?: DateTime.now()
             def dateString = DateTimeFormat.longDate().print(timestamp)
             def hits = searcher.searchContext(channel, q, timestamp)
-            render Template.thymeleafTemplate("context", q: q, channel: channel, hits: hits.hits.collect {new MessageSearchHit(it)}, channels: bot.knownChannels.sort(), dateString: dateString)
+            def model = baseModel + [q: q, channel: channel, hits: hits.hits.collect {new MessageSearchHit(it)}, channels: bot.knownChannels.sort(), dateString: dateString]
+            render Template.thymeleafTemplate(model, "context")
         }
         post ("addChannel") { BanterBot banterBot ->
             def form = parse(Form)
