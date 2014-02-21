@@ -4,4 +4,5 @@ env:
 jdk:
   - openjdk7
 #  - oraclejdk7
+install: true
 script: ./gradlew build
