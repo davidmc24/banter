@@ -22,7 +22,7 @@ class Indexer {
     void indexMessage(UserInfo userInfo, String channel, String text, Date timestamp=new Date()) {
         // Elasticsearch automatically creates a _timestamp which is indexed but not stored
         def doc = [timestamp: timestamp, nickname: userInfo.nickname, username: userInfo.username, realname: userInfo.realname, channel: channel, text: text]
-        def indexResponse = client.prepareIndex(INDEX, TYPE).setSource(doc).execute().actionGet()
+        def indexResponse = client.prepareIndex(banter.SearchConstants.INDEX, banter.SearchConstants.TYPE).setSource(doc).execute().actionGet()
         log.info("Indexing result: created={}, index={}, type={}, id={}, version={}", indexResponse.created,
                 indexResponse.index, indexResponse.type, indexResponse.id, indexResponse.version)
     }
@@ -36,7 +36,7 @@ class Indexer {
                 channel:[type:"string", index:"not_analyzed"],
                 text:[type:"string"]
         ]]
-        pushMapping(INDEX, TYPE, mapping)
+        pushMapping(banter.SearchConstants.INDEX, banter.SearchConstants.TYPE, mapping)
     }
 
     private void pushMapping(String index, String type, Map<String, Object> mapping) {
@@ -62,13 +62,13 @@ class Indexer {
     }
 
     private boolean indexExists(String index) {
-        def clusterState = client.admin().cluster().prepareState().setIndices(INDEX).get().state
+        def clusterState = client.admin().cluster().prepareState().setIndices(banter.SearchConstants.INDEX).get().state
         def indexMetaData = clusterState.metaData.index(index)
         return indexMetaData != null
     }
 
     private boolean mappingExists(String index, String type) {
-        def clusterState = client.admin().cluster().prepareState().setIndices(INDEX).get().state
+        def clusterState = client.admin().cluster().prepareState().setIndices(banter.SearchConstants.INDEX).get().state
         def indexMetaData = clusterState.metaData.index(index)
         return indexMetaData?.mapping(type) != null
     }

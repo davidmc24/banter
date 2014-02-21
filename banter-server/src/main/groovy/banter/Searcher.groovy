@@ -34,8 +34,8 @@ class Searcher {
         if (channel) {
             query = QueryBuilders.filteredQuery(query, FilterBuilders.inFilter("channel", channel))
         }
-        def searchRequest = client.prepareSearch(INDEX)
-                        .setTypes(TYPE)
+        def searchRequest = client.prepareSearch(banter.SearchConstants.INDEX)
+                        .setTypes(banter.SearchConstants.TYPE)
                         .addSort(SortBuilders.fieldSort("timestamp").order(ASC))
                         .setFrom(0).setSize(500)
                         .addHighlightedField("text")
@@ -60,8 +60,8 @@ class Searcher {
                 FilterBuilders.inFilter("channel", channel),
                 FilterBuilders.rangeFilter("timestamp").gte(start).lt(end)
         ))
-        def searchRequest = client.prepareSearch(INDEX)
-                        .setTypes(TYPE)
+        def searchRequest = client.prepareSearch(banter.SearchConstants.INDEX)
+                        .setTypes(banter.SearchConstants.TYPE)
                         .addSort(SortBuilders.fieldSort("timestamp").order(ASC))
                         .setFrom(0).setSize(500)
                         .setHighlighterQuery(QueryBuilders.termQuery("text", queryTerm))
@@ -79,8 +79,8 @@ class Searcher {
     }
 
     Set<String> getKnownChannels() {
-        def searchRequest = client.prepareSearch(INDEX)
-                .setTypes(TYPE)
+        def searchRequest = client.prepareSearch(banter.SearchConstants.INDEX)
+                .setTypes(banter.SearchConstants.TYPE)
                 .addFacet(FacetBuilders.termsFacet("channel").field("channel"))
                 .setSearchType(SearchType.COUNT)
         def searchResponse = searchRequest.get()

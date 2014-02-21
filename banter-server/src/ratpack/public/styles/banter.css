@@ -1,0 +1,22 @@
+div.search-box { margin: 20px 0; }
+
+#search-form .text { height: 2.2em; }
+
+.highlight { background-color: #fff7a6; }
+
+.search-result-header { margin: 30px 0 10px 0 !important; font-size: 12px; }
+.search-result-header h3 { display: -moz-inline-stack; display: inline-block; vertical-align: middle; *vertical-align: auto; zoom: 1; *display: inline; font-size: 13px !important; font-weight: bold !important; margin-left: 2px !important; }
+.search-result-header .time-ago { display: -moz-inline-stack; display: inline-block; vertical-align: middle; *vertical-align: auto; zoom: 1; *display: inline; margin-left: 10px !important; color: #999999; }
+.search-result-header a { display: -moz-inline-stack; display: inline-block; vertical-align: middle; *vertical-align: auto; zoom: 1; *display: inline; margin-left: 10px !important; text-decoration: none; }
+
+#chats div.chatBlock { border-top: 1px solid #e1e1e1; }
+#chats div.chatBlock td { padding: 3px 0; }
+#chats div.chatBlock p, #chats div.chatBlock div { margin: 0 10px; }
+#chats td.nameBlock { width: 110px; background-color: #f7f7f7; border-top: 1px solid white; border-right: 1px solid white; vertical-align: top; font-weight: bold; text-align: right; }
+#chats td.nameBlock p { color: #636363; width: 110px; white-space: nowrap; overflow: hidden; -ms-text-overflow: ellipsis; -o-text-overflow: ellipsis; text-overflow: ellipsis; }
+#chats p { font-size: 12px; }
+#chats td.messageBlock { border-left: 1px solid #e1e1e1; }
+#chats p.timeBlock, #chats p.timeBlock a { white-space: nowrap; color: #999999; float: right; font-size: 11px; }
+
+#footer .footer-body { background: none; }
+#footer a { text-decoration: underline; }

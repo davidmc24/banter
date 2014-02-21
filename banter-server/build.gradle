@@ -1,0 +1,117 @@
+apply plugin: "ratpack-groovy"
+apply plugin: "compass"
+
+buildscript {
+    repositories {
+        jcenter()
+        // TODO: get this into jcenter
+        maven { url "http://dl.bintray.com/robfletcher/gradle-plugins" } // for compass
+        maven { url "http://oss.jfrog.org/artifactory/repo/" } // for ratpack snapshots
+    }
+    dependencies {
+        classpath "io.ratpack:ratpack-gradle:${ratpackVersion}"
+        classpath "org.gradle.plugins:gradle-compass:1.0.7"
+        classpath "com.kenshoo:gradle-fpm:0.4"
+    }
+}
+
+repositories {
+    jcenter()
+    maven { url "http://repo.springsource.org/repo" } // for springloaded
+    maven { url "http://oss.jfrog.org/artifactory/repo/" } // for ratpack snapshots
+}
+
+configurations {
+    all {
+        exclude group: "org.codehaus.groovy", module: "groovy"
+    }
+}
+
+dependencies {
+    compile "ch.qos.logback:logback-classic:1.1.0"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.slf4j:jul-to-slf4j:${slf4jVersion}"
+    compile "org.codehaus.groovy:groovy-all:2.2.1"
+    compile "io.ratpack:ratpack-jackson:${ratpackVersion}"
+    compile "io.ratpack:ratpack-thymeleaf:${ratpackVersion}"
+    compile "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.2.1"
+    compile "joda-time:joda-time:2.3"
+    compile "org.apache.mina:mina-core:2.0.7"
+    compile "org.elasticsearch:elasticsearch:1.0.0.RC2"
+
+    runtime "com.vividsolutions:jts:1.13" // NoClassDefFoundError without this; I blame elasticsearch
+
+    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+
+    // SpringLoaded enables runtime hot reloading.
+    // It is not part of the app runtime and is not shipped in the distribution.
+    springloaded "org.springsource.springloaded:springloaded-core:1.1.1"
+}
+
+compass {
+    cssDir = file("src/ratpack/public/styles")
+    sassDir = file("src/main/sass")
+    debugInfo = false
+    environment = "production"
+}
+
+processResources.inputs.files compileSass
+run.dependsOn watchSass
+clean.dependsOn cleanCompileSass
+
+mainClassName = "banter.Main"
+
+apply plugin: "fpm-packaging"
+
+task stage(type: Copy) {
+    group "build"
+    description "Assembles the package structure"
+    dependsOn installApp
+    into "${project.buildDir}/package"
+    from "src/package"
+    into("opt") {
+        from "${project.buildDir}/install"
+    }
+}
+
+packaging {
+    dependencies = ["ngircd", "openjdk-7-jre-headless"]
+    baseDir = "${project.buildDir}/package"
+    extraOptions = [
+            "--license": "Apache License, Version 2.0",
+            "--vendor": "David M. Carr <david@carrclan.us>",
+            "--maintainer": "David M. Carr <david@carrclan.us>",
+            "--description": "Lightweight logged group chat",
+            "--url": "https://github.com/davidmc24/banter",
+            "--category": "net",
+            "--architecture": "all",
+            "--config-files": "etc/banter/banter.groovy",
+            "--after-install": "../../src/debian/banter.postinst",
+            "--after-remove": "../../src/debian/banter.postrm"
+    ]
+    // TODO: user/group???
+    // TODO: add second config file; "etc/banter/elasticsearch.yml"
+    // https://github.com/kenshoo/gradle-fpm-plugin/issues/11
+    // TODO: specify directories? opt/banter etc/banter var/banter var/log/banter
+    force = true
+}
+
+debian {
+    dependsOn stage
+}
+
+task(buildInfo) {
+    ext.destFile = new File(buildDir, "tmp/build-info.properties")
+    ext.travisEnv = System.getenv().findAll {it.key in ["TRAVIS_BRANCH", "TRAVIS_BUILD_ID", "TRAVIS_BUILD_NUMBER", "TRAVIS_COMMIT", "TRAVIS_COMMIT_RANGE", "TRAVIS_JOB_ID", "TRAVIS_JOB_NUMBER", "TRAVIS_PULL_REQUEST", "TRAVIS_REPO_SLUG", "TRAVIS_JDK_VERSION"]}
+    inputs.properties(travisEnv)
+    outputs.file destFile
+} << {
+    def props = new Properties()
+    props.putAll(travisEnv)
+    destFile.parentFile.mkdirs()
+    destFile.withWriter {props.store(it, null)}
+}
+
+processResources {
+    from buildInfo
+}

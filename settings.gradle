@@ -1,1 +1,3 @@
 rootProject.name = "banter"
+
+include "banter-server"
