@@ -1,4 +1,6 @@
 language: java
+env:
+  - TERM=dumb
 jdk:
   - openjdk7
   - oraclejdk7
