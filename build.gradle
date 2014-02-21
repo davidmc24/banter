@@ -8,6 +8,7 @@ buildscript {
         jcenter()
         // TODO: get this into jcenter
         maven { url "http://dl.bintray.com/robfletcher/gradle-plugins" } // for compass
+        maven { url "http://oss.jfrog.org/artifactory/repo/" } // for ratpack snapshots
     }
     dependencies {
         classpath "io.ratpack:ratpack-gradle:${ratpackVersion}"
@@ -19,6 +20,7 @@ buildscript {
 repositories {
     jcenter()
     maven { url "http://repo.springsource.org/repo" } // for springloaded
+    maven { url "http://oss.jfrog.org/artifactory/repo/" } // for ratpack snapshots
 }
 
 configurations {
