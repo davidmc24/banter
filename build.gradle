@@ -61,6 +61,7 @@ processResources.inputs.files compileSass
 run.dependsOn watchSass
 clean.dependsOn cleanCompileSass
 
+group = "us.carrclan.david.banter"
 mainClassName = "banter.Main"
 
 apply plugin: "fpm-packaging"
