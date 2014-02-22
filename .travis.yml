@@ -1,8 +1,10 @@
 language: java
 env:
+  global:
   - TERM=dumb
+  - secure: ntnl1uZlooWz/wjVOwMzA6hXtYuSI8is1Lj8bzTTKebpU/VGjMb6av42BgPIlYdPQ5SxzeYGZcQZPuD1VgrbuYPqsb7X/ljAgSPxX/6PER9ePxORQ9ujEo6RpggBF41HxN15+f1j57ugedZRn/+DSRmfWdgd7jSUpnFnAAHeKG4=
+  - secure: qbOn3dHvzMCOBtIEpLjYbyjoStMu09YPwyEzFZKgbrxdJO19DLkNunVjTXnbB1Bif2lUuyW7PI0ErEbu+DE0uMdaaMWlRFKwf4MNCFxzm7rEyFXvfu0ReWxs2FB5ZXyNJKhdFymQHtpB197rJYppEYDNvhcZNQD0X7FH4+/QCIE=
 jdk:
-  - openjdk7
-#  - oraclejdk7
+- openjdk7
 install: true
-script: ./gradlew build
+script: "./gradlew -Pojo_user=$OJO_USER -Pojo_password=$OJO_PASSWORD build artifactoryPublish"
