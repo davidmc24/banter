@@ -2,11 +2,18 @@ package banter
 
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
+import com.google.inject.multibindings.Multibinder
 import com.google.inject.name.Names
 import groovy.util.logging.Slf4j
+import nz.net.ultraq.thymeleaf.LayoutDialect
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.node.Node
+import org.thymeleaf.dialect.IDialect
+import ratpack.openid.Attribute
+import ratpack.openid.AuthenticationRequirement
+import ratpack.openid.Required
+import ratpack.openid.provider.google.GoogleAttribute
 
 import javax.inject.Named
 import javax.inject.Singleton
@@ -26,6 +33,10 @@ class BanterModule extends AbstractModule {
         bind(Indexer).asEagerSingleton()
         bind(Searcher).asEagerSingleton()
         bind(BanterBot).asEagerSingleton()
+        Multibinder.newSetBinder(binder(), IDialect).addBinding().to(LayoutDialect)
+        Multibinder.newSetBinder(binder(), AuthenticationRequirement).addBinding().toInstance(AuthenticationRequirement.of(~/\/auth\/.*/))
+        def requiredOpenidAttributeBinder = Multibinder.newSetBinder(binder(), Attribute, Required)
+        GoogleAttribute.values().each {requiredOpenidAttributeBinder.addBinding().toInstance(it)}
     }
 
     @Provides

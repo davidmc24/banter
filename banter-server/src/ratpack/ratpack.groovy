@@ -1,17 +1,14 @@
-import banter.BanterBot
-import banter.BanterModule
-import banter.HttpHeaderConstants
-import banter.MessageSearchHit
-import banter.Searcher
-import banter.ThymeleafLayoutModule
-import com.google.inject.util.Modules
+import banter.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.slf4j.LoggerFactory
-import ratpack.jackson.JacksonModule
-import ratpack.jackson.Jackson
-import ratpack.groovy.Groovy
 import ratpack.form.Form
+import ratpack.groovy.Groovy
+import ratpack.jackson.Jackson
+import ratpack.jackson.JacksonModule
+import ratpack.openid.AuthRPModule
+import ratpack.session.SessionModule
+import ratpack.session.store.MapSessionsModule
 import ratpack.thymeleaf.Template
 import ratpack.thymeleaf.ThymeleafModule
 
@@ -31,7 +28,9 @@ Groovy.ratpack {
     modules {
         register new JacksonModule()
         register new ThymeleafModule()
-        register new ThymeleafLayoutModule()
+        register new SessionModule()
+        register new MapSessionsModule(500, 15)
+        register new AuthRPModule("https://www.google.com/accounts/o8/id")
         register new BanterModule()
     }
     handlers {
@@ -69,6 +68,14 @@ Groovy.ratpack {
         get { BanterBot bot ->
             def model = baseModel + [channels: bot.knownChannels.sort()]
             render Template.thymeleafTemplate(model, "index")
+        }
+        prefix("auth") {
+            get("page1") {
+                response.send("This is page1")
+            }
+            get("page2") {
+                response.send("This is page2")
+            }
         }
         get ("admin") { BanterBot bot ->
             def notice = request.queryParams["notice"] ?: ""

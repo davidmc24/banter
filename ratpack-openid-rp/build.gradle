@@ -1,0 +1,17 @@
+apply plugin: "java"
+
+repositories {
+    jcenter()
+    maven { url "http://oss.jfrog.org/artifactory/repo/" } // for ratpack snapshots
+}
+
+dependencies {
+    compile "io.ratpack:ratpack-session:${ratpackVersion}"
+    compile "io.ratpack:ratpack-guice:${ratpackVersion}"
+    compile "org.openid4java:openid4java:0.9.8"
+
+    testCompile "org.codehaus.groovy:groovy-all:2.2.1"
+    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+}
+
+sourceCompatibility = "1.7"

@@ -38,6 +38,7 @@ dependencies {
     compile "joda-time:joda-time:2.3"
     compile "org.apache.mina:mina-core:2.0.7"
     compile "org.elasticsearch:elasticsearch:1.0.0.RC2"
+    compile project(":ratpack-openid-rp")
 
     runtime "com.vividsolutions:jts:1.13" // NoClassDefFoundError without this; I blame elasticsearch
 
@@ -47,6 +48,8 @@ dependencies {
     // It is not part of the app runtime and is not shipped in the distribution.
     springloaded "org.springsource.springloaded:springloaded-core:1.1.1"
 }
+
+sourceCompatibility = "1.7"
 
 compass {
     cssDir = file("src/ratpack/public/styles")
