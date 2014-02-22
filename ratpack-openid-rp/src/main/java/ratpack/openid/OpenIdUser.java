@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class OpenIdUser implements Serializable {
-
     private final String identifier;
     private final Map<String, List<String>> attributes;
 
@@ -24,5 +23,4 @@ public class OpenIdUser implements Serializable {
     public MultiValueMap<String, String> getAttributes() {
         return new ImmutableDelegatingMultiValueMap<>(attributes);
     }
-
 }

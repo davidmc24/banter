@@ -1,20 +1,17 @@
-package ratpack.openid.provider.google;
+package ratpack.openid.provider.yahoo;
 
 import org.openid4java.message.MessageException;
 import org.openid4java.message.ax.FetchRequest;
 import ratpack.openid.Attribute;
 
-public enum GoogleAttribute implements Attribute {
-    country("country", "http://axschema.org/contact/country/home"),
+public enum YahooAttribute implements Attribute {
     email("email", "http://axschema.org/contact/email"),
-    firstname("firstname", "http://axschema.org/namePerson/first"),
-    language("language", "http://axschema.org/pref/language"),
-    lastname("lastname", "http://axschema.org/namePerson/last");
+    fullname("fullname", "http://axschema.org/namePerson");
 
     private final String alias;
     private final String typeUri;
 
-    GoogleAttribute(String alias, String typeUri) {
+    YahooAttribute(String alias, String typeUri) {
         this.alias = alias;
         this.typeUri = typeUri;
     }

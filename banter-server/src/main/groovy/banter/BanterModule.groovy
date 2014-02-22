@@ -12,8 +12,12 @@ import org.elasticsearch.node.Node
 import org.thymeleaf.dialect.IDialect
 import ratpack.openid.Attribute
 import ratpack.openid.AuthenticationRequirement
+import ratpack.openid.ProviderSelectionStrategy
 import ratpack.openid.Required
+import ratpack.openid.SingleProviderSelectionStrategy
+import ratpack.openid.provider.KnownProviderDiscoveryUrls
 import ratpack.openid.provider.google.GoogleAttribute
+import ratpack.openid.provider.yahoo.YahooAttribute
 
 import javax.inject.Named
 import javax.inject.Singleton
@@ -36,7 +40,10 @@ class BanterModule extends AbstractModule {
         Multibinder.newSetBinder(binder(), IDialect).addBinding().to(LayoutDialect)
         Multibinder.newSetBinder(binder(), AuthenticationRequirement).addBinding().toInstance(AuthenticationRequirement.of(~/\/auth\/.*/))
         def requiredOpenidAttributeBinder = Multibinder.newSetBinder(binder(), Attribute, Required)
+        bind(ProviderSelectionStrategy).toInstance(new SingleProviderSelectionStrategy(KnownProviderDiscoveryUrls.GOOGLE))
         GoogleAttribute.values().each {requiredOpenidAttributeBinder.addBinding().toInstance(it)}
+        //bind(ProviderSelectionStrategy).toInstance(new SingleProviderSelectionStrategy(KnownProviderDiscoveryUrls.YAHOO))
+        //YahooAttribute.values().each {requiredOpenidAttributeBinder.addBinding().toInstance(it)}
     }
 
     @Provides

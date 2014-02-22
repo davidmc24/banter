@@ -9,7 +9,6 @@ import org.openid4java.message.ax.FetchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ratpack.func.Action;
-import ratpack.handling.Background;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
 import ratpack.handling.Redirector;
@@ -24,8 +23,6 @@ import java.util.concurrent.Callable;
 import static ratpack.openid.SessionConstants.*;
 
 public class AuthHandler implements Handler {
-    // TODO: clean up
-
     // TODO: remove?
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -34,8 +31,7 @@ public class AuthHandler implements Handler {
     String verificationPath;
 
     @Inject
-    @ProviderUrl
-    String providerUrl;
+    ProviderSelectionStrategy providerSelectionStrategy;
 
     @Inject
     Set<AuthenticationRequirement> authenticationRequirements;
@@ -61,49 +57,13 @@ public class AuthHandler implements Handler {
                 context.next();
             } else {
                 logger.info("not authenticated");
-                final Redirector redirector = context.get(Redirector.class);
-                final Background background = context.getBackground();
-                background.exec(new Callable<DiscoveryInformation>() {
-                    @Override
-                    public DiscoveryInformation call() throws Exception {
-                        return manager.associate(manager.discover(providerUrl));
-                    }
-                }).onError(new Action<Throwable>() {
-                    @Override
-                    public void execute(Throwable ex) throws Exception {
-                        logger.error("Failed", ex);
-                    }
-                }).then(new Action<DiscoveryInformation>() {
-                    @Override
-                    public void execute(final DiscoveryInformation discoveryInfo) throws Exception {
-                        context.get(SessionStorage.class).put(DISCOVERY_INFO, discoveryInfo);
-                        background.exec(new Callable<AuthRequest>() {
-                            @Override
-                            public AuthRequest call() throws Exception {
-                                String realm = context.get(PublicAddress.class).getAddress(context).toString();
-                                String returnToUrl = realm + "/" + verificationPath;
-                                logger.info("using returnToUrl {}, realm {}", returnToUrl, realm);
-                                return manager.authenticate(discoveryInfo, returnToUrl, realm);
-                            }
-                        }).onError(new Action<Throwable>() {
-                            @Override
-                            public void execute(Throwable ex) throws Exception {
-                                logger.error("Failed", ex);
-                            }
-                        }).then(new Action<AuthRequest>() {
-                            @Override
-                            public void execute(AuthRequest authReq) throws Exception {
-                                Request request = context.getRequest();
-                                SessionStorage sessionStorage = context.get(SessionStorage.class);
-                                String requestedUri = request.getUri();
-                                logger.info("Saving URI {}", requestedUri);
-                                sessionStorage.put(SAVED_URI, requestedUri);
-                                authReq.addExtension(createFetchRequest());
-                                redirector.redirect(context, authReq.getDestinationUrl(true), HttpResponseStatus.FOUND.code());
-                            }
-                        });
-                    }
-                });
+                if (providerSelectionStrategy.handleProviderSelection(context)) {
+                    context.getBackground()
+                            .exec(new DiscoverProviderCallable())
+                            .then(new ProcessDiscoveryInfoAction(context));
+                } else {
+                    logger.info("provider selection doing something");
+                }
             }
         } else {
             logger.info("not requiring auth");
@@ -135,4 +95,66 @@ public class AuthHandler implements Handler {
         return context.get(SessionStorage.class).containsKey(USER);
     }
 
+    private class DiscoverProviderCallable implements Callable<DiscoveryInformation> {
+        @Override
+        public DiscoveryInformation call() throws Exception {
+            String discoveryUrl = providerSelectionStrategy.getProviderDiscoveryUrl();
+            return manager.associate(manager.discover(discoveryUrl));
+        }
+    }
+
+    private class ProcessDiscoveryInfoAction implements Action<DiscoveryInformation> {
+
+        private final Context context;
+
+        ProcessDiscoveryInfoAction(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void execute(final DiscoveryInformation discoveryInfo) throws Exception {
+            context.get(SessionStorage.class).put(DISCOVERY_INFO, discoveryInfo);
+            context.getBackground()
+                    .exec(new AuthenticateCallable(context, discoveryInfo))
+                    .then(new ProcessAuthenticationAction(context));
+        }
+    }
+
+    private class AuthenticateCallable implements Callable<AuthRequest> {
+        private final Context context;
+        private final DiscoveryInformation discoveryInfo;
+
+        AuthenticateCallable(Context context, DiscoveryInformation discoveryInfo) {
+            this.context = context;
+            this.discoveryInfo = discoveryInfo;
+        }
+
+        @Override
+        public AuthRequest call() throws Exception {
+            String realm = context.get(PublicAddress.class).getAddress(context).toString();
+            String returnToUrl = realm + "/" + verificationPath;
+            logger.info("using returnToUrl {}, realm {}", returnToUrl, realm);
+            return manager.authenticate(discoveryInfo, returnToUrl, realm);
+        }
+    }
+
+    private class ProcessAuthenticationAction implements Action<AuthRequest> {
+        private final Context context;
+
+        ProcessAuthenticationAction(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void execute(AuthRequest authReq) throws Exception {
+            Redirector redirector = context.get(Redirector.class);
+            Request request = context.getRequest();
+            SessionStorage sessionStorage = context.get(SessionStorage.class);
+            String requestedUri = request.getUri();
+            logger.info("Saving URI {}", requestedUri);
+            sessionStorage.put(SAVED_URI, requestedUri);
+            authReq.addExtension(createFetchRequest());
+            redirector.redirect(context, authReq.getDestinationUrl(true), HttpResponseStatus.FOUND.code());
+        }
+    }
 }

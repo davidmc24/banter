@@ -11,7 +11,6 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchResponse;
 import ratpack.func.Action;
-import ratpack.handling.Background;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
 import ratpack.handling.Redirector;
@@ -26,7 +25,6 @@ import java.util.concurrent.Callable;
 import static ratpack.openid.SessionConstants.*;
 
 public class CallbackHandler implements Handler {
-
     @Inject
     ConsumerManager manager;
 
@@ -37,8 +35,9 @@ public class CallbackHandler implements Handler {
     @Override
     public void handle(final Context context) throws Exception {
         if (isVerificationRequest(context)) {
-            Background background = context.getBackground();
-            background.exec(new VerifyAuthenticationCallable(context)).then(new ProcessVerificationAction(context));
+            context.getBackground()
+                    .exec(new VerifyAuthenticationCallable(context))
+                    .then(new ProcessVerificationAction(context));
         } else {
             context.next();
         }
@@ -89,7 +88,7 @@ public class CallbackHandler implements Handler {
         return (Map<String, List<String>>) fetchResponse.getAttributes();
     }
 
-    class VerifyAuthenticationCallable implements Callable<VerificationResult> {
+    private class VerifyAuthenticationCallable implements Callable<VerificationResult> {
         private final Context context;
 
         VerifyAuthenticationCallable(Context context) {
@@ -105,7 +104,7 @@ public class CallbackHandler implements Handler {
         }
     }
 
-    class ProcessVerificationAction implements Action<VerificationResult> {
+    private class ProcessVerificationAction implements Action<VerificationResult> {
         private final Context context;
 
         ProcessVerificationAction(Context context) {
@@ -122,5 +121,4 @@ public class CallbackHandler implements Handler {
             }
         }
     }
-
 }

@@ -6,9 +6,12 @@ import ratpack.form.Form
 import ratpack.groovy.Groovy
 import ratpack.jackson.Jackson
 import ratpack.jackson.JacksonModule
-import ratpack.openid.AuthRPModule
+import ratpack.openid.OpenIdRpModule
+import ratpack.openid.OpenIdUser
+import ratpack.openid.SessionConstants
 import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
+import ratpack.session.store.SessionStorage
 import ratpack.thymeleaf.Template
 import ratpack.thymeleaf.ThymeleafModule
 
@@ -30,7 +33,7 @@ Groovy.ratpack {
         register new ThymeleafModule()
         register new SessionModule()
         register new MapSessionsModule(500, 15)
-        register new AuthRPModule("https://www.google.com/accounts/o8/id")
+        register new OpenIdRpModule()
         register new BanterModule()
     }
     handlers {
@@ -75,6 +78,10 @@ Groovy.ratpack {
             }
             get("page2") {
                 response.send("This is page2")
+            }
+            get("userInfo") { SessionStorage sessionStorage ->
+                def user = sessionStorage.get(SessionConstants.USER) as OpenIdUser
+                response.send("Logged in as id ${user.identifier} with attributes ${user.attributes}")
             }
         }
         get ("admin") { BanterBot bot ->

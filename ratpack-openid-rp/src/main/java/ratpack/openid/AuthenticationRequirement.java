@@ -5,7 +5,6 @@ import ratpack.handling.Context;
 import java.util.regex.Pattern;
 
 public class AuthenticationRequirement {
-
     private final Pattern pattern;
 
     private AuthenticationRequirement(Pattern pattern) {
@@ -14,8 +13,6 @@ public class AuthenticationRequirement {
 
     boolean matches(Context context) {
         String uri = context.getRequest().getUri();
-        System.out.println("uri: " + uri);
-        System.out.println("pattern: " + pattern.toString());
         return pattern.matcher(uri).matches();
     }
 
@@ -26,5 +23,4 @@ public class AuthenticationRequirement {
     public static AuthenticationRequirement of(Pattern pattern) {
         return new AuthenticationRequirement(pattern);
     }
-
 }
