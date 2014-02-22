@@ -1,6 +1,28 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:2.0.9"
+    }
+}
+
 allprojects {
     apply plugin: "project-reports"
     apply plugin: "idea"
+    apply plugin: "artifactory"
 
     group = "us.carrclan.david.banter"
+}
+
+artifactory {
+    contextUrl = "https://oss.jfrog.org"
+    publish {
+        repository {
+            repoKey = "oss-snapshot-local"
+            username = "${ojo_user}"
+            password = "${ojo_password}"
+            maven = true
+        }
+    }
 }
