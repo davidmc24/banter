@@ -64,6 +64,26 @@ clean.dependsOn cleanCompileSass
 
 mainClassName = "banter.Main"
 
+task(buildInfo) {
+    ext.destFile = new File(buildDir, "tmp/build-info.properties")
+    ext.travisEnv = System.getenv().findAll {it.key in ["TRAVIS_BRANCH", "TRAVIS_BUILD_ID", "TRAVIS_BUILD_NUMBER", "TRAVIS_COMMIT", "TRAVIS_COMMIT_RANGE", "TRAVIS_JOB_ID", "TRAVIS_JOB_NUMBER", "TRAVIS_PULL_REQUEST", "TRAVIS_REPO_SLUG", "TRAVIS_JDK_VERSION"]}
+    inputs.properties(travisEnv)
+    outputs.file destFile
+} << {
+    def props = new Properties()
+    props.putAll(travisEnv)
+    destFile.parentFile.mkdirs()
+    destFile.withWriter {props.store(it, null)}
+}
+
+processResources {
+    from buildInfo
+}
+
+artifacts {
+    archives distTar
+}
+
 apply plugin: "fpm-packaging"
 
 task stage(type: Copy) {
@@ -101,20 +121,4 @@ packaging {
 
 debian {
     dependsOn stage
-}
-
-task(buildInfo) {
-    ext.destFile = new File(buildDir, "tmp/build-info.properties")
-    ext.travisEnv = System.getenv().findAll {it.key in ["TRAVIS_BRANCH", "TRAVIS_BUILD_ID", "TRAVIS_BUILD_NUMBER", "TRAVIS_COMMIT", "TRAVIS_COMMIT_RANGE", "TRAVIS_JOB_ID", "TRAVIS_JOB_NUMBER", "TRAVIS_PULL_REQUEST", "TRAVIS_REPO_SLUG", "TRAVIS_JDK_VERSION"]}
-    inputs.properties(travisEnv)
-    outputs.file destFile
-} << {
-    def props = new Properties()
-    props.putAll(travisEnv)
-    destFile.parentFile.mkdirs()
-    destFile.withWriter {props.store(it, null)}
-}
-
-processResources {
-    from buildInfo
 }
