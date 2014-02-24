@@ -6,5 +6,5 @@ env:
   - secure: qbOn3dHvzMCOBtIEpLjYbyjoStMu09YPwyEzFZKgbrxdJO19DLkNunVjTXnbB1Bif2lUuyW7PI0ErEbu+DE0uMdaaMWlRFKwf4MNCFxzm7rEyFXvfu0ReWxs2FB5ZXyNJKhdFymQHtpB197rJYppEYDNvhcZNQD0X7FH4+/QCIE=
 jdk:
 - openjdk7
-install: true
-script: "./gradlew -Pojo_user=$OJO_USER -Pojo_password=$OJO_PASSWORD build artifactoryPublish"
+install: "gem install fpm"
+script: "./gradlew -Pojo_user=$OJO_USER -Pojo_password=$OJO_PASSWORD build debian artifactoryPublish"

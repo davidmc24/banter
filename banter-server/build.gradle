@@ -82,6 +82,7 @@ processResources {
 
 artifacts {
     archives distTar
+    archives file("${project.buildDir}/linux-package/${name}_${version}_all.deb")
 }
 
 apply plugin: "fpm-packaging"
