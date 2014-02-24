@@ -1,4 +1,5 @@
 import banter.*
+import org.apache.shiro.SecurityUtils
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.slf4j.LoggerFactory
@@ -33,7 +34,8 @@ Groovy.ratpack {
         register new ThymeleafModule()
         register new SessionModule()
         register new MapSessionsModule(500, 15)
-        register new OpenIdRpModule()
+        //register new OpenIdRpModule()
+        register new ShiroModule()
         register new BanterModule()
     }
     handlers {
@@ -82,6 +84,10 @@ Groovy.ratpack {
             get("userInfo") { SessionStorage sessionStorage ->
                 def user = sessionStorage.get(SessionConstants.USER) as OpenIdUser
                 response.send("Logged in as id ${user.identifier} with attributes ${user.attributes}")
+            }
+            get("shiroUserInfo") {
+                def subject = SecurityUtils.getSubject()
+                response.send("Logged in? ${subject.authenticated}; principal=${subject.principal}")
             }
         }
         get ("admin") { BanterBot bot ->

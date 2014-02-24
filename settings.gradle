@@ -1,3 +1,3 @@
 rootProject.name = "banter"
 
-include "ratpack-openid-rp", "banter-server"
+include "ratpack-openid", "ratpack-shiro", "banter-server"

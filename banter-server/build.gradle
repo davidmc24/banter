@@ -38,7 +38,8 @@ dependencies {
     compile "joda-time:joda-time:2.3"
     compile "org.apache.mina:mina-core:2.0.7"
     compile "org.elasticsearch:elasticsearch:1.0.0.RC2"
-    compile project(":ratpack-openid-rp")
+    compile project(":ratpack-openid")
+    compile project(":ratpack-shiro")
 
     runtime "com.vividsolutions:jts:1.13" // NoClassDefFoundError without this; I blame elasticsearch
 
@@ -122,4 +123,11 @@ packaging {
 
 debian {
     dependsOn stage
+}
+
+task(runDebug, dependsOn: "classes", type: JavaExec) {
+    main = mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = file("src/ratpack")
+    debug = true
 }

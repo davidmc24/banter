@@ -13,6 +13,12 @@ allprojects {
     apply plugin: "artifactory"
 
     group = "us.carrclan.david.banter"
+
+    idea {
+        project {
+            languageLevel = "1.7"
+        }
+    }
 }
 
 artifactory {
