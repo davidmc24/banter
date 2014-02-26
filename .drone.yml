@@ -1,8 +1,0 @@
-image: oraclejdk7
-script:
-  - gem install fpm
-  - ./gradlew build debian
-notify:
-  email:
-    recipients:
-      - david@carrclan.us
