@@ -20,11 +20,11 @@ import static io.netty.handler.codec.http.HttpResponseStatus.*
 def log = LoggerFactory.getLogger("banter.ratpack.handler")
 
 def buildInfo = new Properties()
-def propsFile = getClass().getResourceAsStream("/build-info.properties")
+def propsFile = getClass().getResourceAsStream("/META-INF/banter-server.properties")
 if (propsFile) {
     buildInfo.load(propsFile)
 }
-def version = buildInfo.getProperty("TRAVIS_COMMIT")
+def version = buildInfo.getProperty("Change")
 def baseModel = [version: version, shortVersion: version?.take(8), versionUrl: "https://github.com/davidmc24/banter/commit/${version}"]
 
 Groovy.ratpack {
