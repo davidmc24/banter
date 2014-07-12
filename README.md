@@ -1,5 +1,9 @@
 [![Build Status](https://travis-ci.org/davidmc24/banter.png?branch=master)](https://travis-ci.org/davidmc24/banter)
 
+[![Project Status](http://stillmaintained.com/davidmc24/banter.png)](http://stillmaintained.com/davidmc24/banter)
+
+This project is unlikely to be updated further.  If you are interested in this type of service, I recommend using [HipChat](https://www.hipchat.com/).
+
 # Distributions
 
 There aren't currently any release versions.  The latest snapshots can be downloaded from OJO here:
